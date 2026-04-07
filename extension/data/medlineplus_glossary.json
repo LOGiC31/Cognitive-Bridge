@@ -1,0 +1,438 @@
+{
+  "hypertension": {
+    "definition": "High blood pressure — a condition where the force of blood against your artery walls is consistently too high, which can lead to heart disease and stroke.",
+    "url": "https://medlineplus.gov/highbloodpressure.html"
+  },
+  "diabetes mellitus": {
+    "definition": "A group of diseases where your body can't properly use sugar (glucose) for energy, causing high blood sugar levels.",
+    "url": "https://medlineplus.gov/diabetes.html"
+  },
+  "diabetes": {
+    "definition": "A condition where your body has trouble controlling blood sugar levels, either because it doesn't make enough insulin or can't use it well.",
+    "url": "https://medlineplus.gov/diabetes.html"
+  },
+  "hyperlipidemia": {
+    "definition": "High levels of fats (cholesterol and triglycerides) in your blood, which can increase your risk of heart disease.",
+    "url": "https://medlineplus.gov/cholesterol.html"
+  },
+  "myocardial infarction": {
+    "definition": "A heart attack — when blood flow to part of the heart muscle is blocked, causing damage to the heart.",
+    "url": "https://medlineplus.gov/heartattack.html"
+  },
+  "arrhythmia": {
+    "definition": "An irregular heartbeat — your heart may beat too fast, too slow, or with an uneven rhythm.",
+    "url": "https://medlineplus.gov/arrhythmia.html"
+  },
+  "atrial fibrillation": {
+    "definition": "An irregular and often rapid heart rhythm starting in the upper chambers of the heart, which can increase stroke risk.",
+    "url": "https://medlineplus.gov/atrialfibrillation.html"
+  },
+  "fibrillation": {
+    "definition": "Rapid, irregular twitching of heart muscle fibers that prevents the heart from pumping blood effectively.",
+    "url": "https://medlineplus.gov/atrialfibrillation.html"
+  },
+  "thrombosis": {
+    "definition": "A blood clot that forms inside a blood vessel, which can block blood flow and cause serious problems.",
+    "url": "https://medlineplus.gov/bloodclots.html"
+  },
+  "embolism": {
+    "definition": "A blockage in a blood vessel caused by a blood clot or other material that has traveled from another part of the body.",
+    "url": "https://medlineplus.gov/pulmonaryembolism.html"
+  },
+  "pulmonary embolism": {
+    "definition": "A blood clot in the lungs that blocks blood flow, causing difficulty breathing and can be life-threatening.",
+    "url": "https://medlineplus.gov/pulmonaryembolism.html"
+  },
+  "edema": {
+    "definition": "Swelling caused by excess fluid trapped in your body's tissues, often in the legs, ankles, or feet.",
+    "url": "https://medlineplus.gov/edema.html"
+  },
+  "dyspnea": {
+    "definition": "Shortness of breath or difficulty breathing, which can range from mild to severe.",
+    "url": "https://medlineplus.gov/breathingproblems.html"
+  },
+  "tachycardia": {
+    "definition": "A faster than normal heart rate (over 100 beats per minute) while at rest.",
+    "url": "https://medlineplus.gov/arrhythmia.html"
+  },
+  "bradycardia": {
+    "definition": "A slower than normal heart rate (under 60 beats per minute), which may not pump enough blood to the body.",
+    "url": "https://medlineplus.gov/arrhythmia.html"
+  },
+  "angina": {
+    "definition": "Chest pain or pressure caused by reduced blood flow to the heart muscle, often a sign of heart disease.",
+    "url": "https://medlineplus.gov/angina.html"
+  },
+  "carcinoma": {
+    "definition": "A type of cancer that starts in cells that line the inner or outer surfaces of the body (like skin or organ linings).",
+    "url": "https://medlineplus.gov/cancer.html"
+  },
+  "lymphoma": {
+    "definition": "A cancer that begins in the lymphatic system (the body's disease-fighting network), affecting white blood cells called lymphocytes.",
+    "url": "https://medlineplus.gov/lymphoma.html"
+  },
+  "sarcoma": {
+    "definition": "A rare type of cancer that develops in bones, muscles, fat, blood vessels, or other connective tissues.",
+    "url": "https://medlineplus.gov/cancer.html"
+  },
+  "melanoma": {
+    "definition": "The most serious type of skin cancer, which develops in the cells that give your skin its color.",
+    "url": "https://medlineplus.gov/melanoma.html"
+  },
+  "metastasis": {
+    "definition": "The spread of cancer from where it started to other parts of the body through the blood or lymph system.",
+    "url": "https://medlineplus.gov/cancer.html"
+  },
+  "benign": {
+    "definition": "Not cancerous — a growth that does not spread to other parts of the body.",
+    "url": "https://medlineplus.gov/benigntumors.html"
+  },
+  "malignant": {
+    "definition": "Cancerous — cells that can invade nearby tissues and spread to other parts of the body.",
+    "url": "https://medlineplus.gov/cancer.html"
+  },
+  "pneumonia": {
+    "definition": "An infection that inflames the air sacs in one or both lungs, which may fill with fluid, causing cough and difficulty breathing.",
+    "url": "https://medlineplus.gov/pneumonia.html"
+  },
+  "bronchitis": {
+    "definition": "Inflammation of the lining of the bronchial tubes (airways), causing coughing and mucus production.",
+    "url": "https://medlineplus.gov/bronchitis.html"
+  },
+  "asthma": {
+    "definition": "A condition where your airways narrow and swell, producing extra mucus that makes breathing difficult.",
+    "url": "https://medlineplus.gov/asthma.html"
+  },
+  "copd": {
+    "definition": "Chronic Obstructive Pulmonary Disease — a group of lung diseases (including emphysema and chronic bronchitis) that block airflow and make it hard to breathe.",
+    "url": "https://medlineplus.gov/copd.html"
+  },
+  "emphysema": {
+    "definition": "A lung condition where the air sacs are damaged, making it hard to breathe out, often caused by smoking.",
+    "url": "https://medlineplus.gov/emphysema.html"
+  },
+  "anemia": {
+    "definition": "A condition where you don't have enough healthy red blood cells to carry adequate oxygen to your body's tissues, causing fatigue.",
+    "url": "https://medlineplus.gov/anemia.html"
+  },
+  "hemoglobin": {
+    "definition": "The protein in red blood cells that carries oxygen from your lungs to the rest of your body.",
+    "url": "https://medlineplus.gov/bloodcount.html"
+  },
+  "platelet": {
+    "definition": "Tiny blood cells that help your body form clots to stop bleeding.",
+    "url": "https://medlineplus.gov/plateletdisorders.html"
+  },
+  "leukocyte": {
+    "definition": "White blood cells — part of your immune system that helps fight infections and diseases.",
+    "url": "https://medlineplus.gov/bloodcount.html"
+  },
+  "erythrocyte": {
+    "definition": "Red blood cells — cells that carry oxygen from your lungs to all parts of your body.",
+    "url": "https://medlineplus.gov/bloodcount.html"
+  },
+  "creatinine": {
+    "definition": "A waste product from normal muscle activity that your kidneys filter out. High levels may indicate kidney problems.",
+    "url": "https://medlineplus.gov/kidneytests.html"
+  },
+  "bilirubin": {
+    "definition": "A yellow substance made when your body breaks down old red blood cells. High levels can cause jaundice (yellowing of skin).",
+    "url": "https://medlineplus.gov/bilirubin.html"
+  },
+  "troponin": {
+    "definition": "A protein released into the blood when the heart muscle is damaged. Elevated levels often indicate a heart attack.",
+    "url": "https://medlineplus.gov/heartattack.html"
+  },
+  "albumin": {
+    "definition": "A protein made by your liver that keeps fluid in your bloodstream. Low levels can indicate liver or kidney disease.",
+    "url": "https://medlineplus.gov/liverfunctiontests.html"
+  },
+  "hepatitis": {
+    "definition": "Inflammation of the liver, usually caused by a viral infection, which can impair the liver's ability to function.",
+    "url": "https://medlineplus.gov/hepatitis.html"
+  },
+  "cirrhosis": {
+    "definition": "Late-stage scarring of the liver caused by long-term liver damage, which prevents the liver from working properly.",
+    "url": "https://medlineplus.gov/cirrhosis.html"
+  },
+  "nephritis": {
+    "definition": "Inflammation of the kidneys that can affect how well they filter waste from the blood.",
+    "url": "https://medlineplus.gov/kidneydiseases.html"
+  },
+  "arthritis": {
+    "definition": "Inflammation of one or more joints, causing pain, swelling, and stiffness that can worsen with age.",
+    "url": "https://medlineplus.gov/arthritis.html"
+  },
+  "osteoporosis": {
+    "definition": "A condition where bones become weak and brittle, making them more likely to break.",
+    "url": "https://medlineplus.gov/osteoporosis.html"
+  },
+  "fracture": {
+    "definition": "A broken bone, which can range from a thin crack to a complete break.",
+    "url": "https://medlineplus.gov/fractures.html"
+  },
+  "appendicitis": {
+    "definition": "A painful swelling of the appendix (a small pouch connected to the large intestine) that usually requires surgery.",
+    "url": "https://medlineplus.gov/appendicitis.html"
+  },
+  "cholecystitis": {
+    "definition": "Inflammation of the gallbladder, usually caused by gallstones blocking the tube leading out of the gallbladder.",
+    "url": "https://medlineplus.gov/gallstones.html"
+  },
+  "pancreatitis": {
+    "definition": "Inflammation of the pancreas, which can cause severe abdominal pain, nausea, and digestive problems.",
+    "url": "https://medlineplus.gov/pancreatitis.html"
+  },
+  "gastritis": {
+    "definition": "Inflammation of the stomach lining that can cause pain, nausea, and indigestion.",
+    "url": "https://medlineplus.gov/gastritis.html"
+  },
+  "colitis": {
+    "definition": "Inflammation of the inner lining of the colon (large intestine), causing diarrhea, pain, and bloating.",
+    "url": "https://medlineplus.gov/ulcerativecolitis.html"
+  },
+  "diverticulitis": {
+    "definition": "Inflammation or infection of small pouches (diverticula) that form in the walls of the intestine.",
+    "url": "https://medlineplus.gov/diverticulosis.html"
+  },
+  "thyroid": {
+    "definition": "A butterfly-shaped gland in your neck that makes hormones controlling how your body uses energy.",
+    "url": "https://medlineplus.gov/thyroiddiseases.html"
+  },
+  "hypothyroidism": {
+    "definition": "An underactive thyroid gland — when your thyroid doesn't make enough hormones, causing tiredness, weight gain, and feeling cold.",
+    "url": "https://medlineplus.gov/hypothyroidism.html"
+  },
+  "hyperthyroidism": {
+    "definition": "An overactive thyroid gland — when your thyroid makes too much hormone, causing weight loss, rapid heartbeat, and nervousness.",
+    "url": "https://medlineplus.gov/hyperthyroidism.html"
+  },
+  "levothyroxine": {
+    "definition": "A medication used to treat hypothyroidism. It replaces the thyroid hormone your body isn't making enough of.",
+    "url": "https://medlineplus.gov/druginfo/meds/a682461.html"
+  },
+  "metformin": {
+    "definition": "A medication used to treat type 2 diabetes by helping control the amount of sugar in your blood.",
+    "url": "https://medlineplus.gov/druginfo/meds/a696005.html"
+  },
+  "lisinopril": {
+    "definition": "A blood pressure medication (ACE inhibitor) used to treat high blood pressure and heart failure.",
+    "url": "https://medlineplus.gov/druginfo/meds/a692051.html"
+  },
+  "atorvastatin": {
+    "definition": "A cholesterol-lowering medication (statin) that reduces 'bad' cholesterol and fats in the blood.",
+    "url": "https://medlineplus.gov/druginfo/meds/a600045.html"
+  },
+  "omeprazole": {
+    "definition": "A medication that reduces stomach acid production, used to treat heartburn, acid reflux, and stomach ulcers.",
+    "url": "https://medlineplus.gov/druginfo/meds/a693050.html"
+  },
+  "amoxicillin": {
+    "definition": "An antibiotic used to treat a wide variety of bacterial infections by stopping the growth of bacteria.",
+    "url": "https://medlineplus.gov/druginfo/meds/a685001.html"
+  },
+  "azithromycin": {
+    "definition": "An antibiotic used to treat many types of bacterial infections, including respiratory and skin infections.",
+    "url": "https://medlineplus.gov/druginfo/meds/a697037.html"
+  },
+  "acetaminophen": {
+    "definition": "A common pain reliever and fever reducer (brand name Tylenol) used to treat mild to moderate pain.",
+    "url": "https://medlineplus.gov/druginfo/meds/a681004.html"
+  },
+  "ibuprofen": {
+    "definition": "An anti-inflammatory pain reliever (brand names Advil, Motrin) used to reduce fever, pain, and swelling.",
+    "url": "https://medlineplus.gov/druginfo/meds/a682159.html"
+  },
+  "hydrochlorothiazide": {
+    "definition": "A water pill (diuretic) that helps your body get rid of extra salt and water, used to treat high blood pressure.",
+    "url": "https://medlineplus.gov/druginfo/meds/a682571.html"
+  },
+  "prognosis": {
+    "definition": "The likely course and expected outcome of a disease — what doctors think will happen with the condition over time.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "diagnosis": {
+    "definition": "The identification of a disease or condition based on your symptoms, medical history, and test results.",
+    "url": "https://medlineplus.gov/ency/article/002224.htm"
+  },
+  "etiology": {
+    "definition": "The cause or origin of a disease — what led to the condition developing.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "pathology": {
+    "definition": "The study of disease — examining tissues and body fluids to diagnose illness.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "biopsy": {
+    "definition": "A procedure where a small sample of tissue is removed from your body and examined under a microscope to check for disease.",
+    "url": "https://medlineplus.gov/biopsy.html"
+  },
+  "mri": {
+    "definition": "Magnetic Resonance Imaging — a scan that uses strong magnets and radio waves to create detailed pictures of the inside of your body.",
+    "url": "https://medlineplus.gov/mriscans.html"
+  },
+  "ct scan": {
+    "definition": "Computed Tomography scan — a special X-ray that takes detailed cross-section pictures of the inside of your body.",
+    "url": "https://medlineplus.gov/ctscans.html"
+  },
+  "ultrasound": {
+    "definition": "An imaging test that uses sound waves to create pictures of structures inside your body.",
+    "url": "https://medlineplus.gov/ultrasound.html"
+  },
+  "echocardiogram": {
+    "definition": "An ultrasound of the heart that shows how well your heart is pumping blood and whether the valves are working properly.",
+    "url": "https://medlineplus.gov/echocardiography.html"
+  },
+  "electrocardiogram": {
+    "definition": "A test (also called ECG or EKG) that records the electrical activity of your heart to detect problems with heart rhythm.",
+    "url": "https://medlineplus.gov/electrocardiogram.html"
+  },
+  "intravenous": {
+    "definition": "Given through a vein — a way to deliver fluids or medication directly into your bloodstream through a small tube in a vein.",
+    "url": "https://medlineplus.gov/ency/article/007242.htm"
+  },
+  "subcutaneous": {
+    "definition": "Under the skin — a way to give injections into the fatty tissue just below the skin surface.",
+    "url": "https://medlineplus.gov/ency/article/007279.htm"
+  },
+  "intramuscular": {
+    "definition": "Into the muscle — a way to give injections deep into a muscle so the medication is absorbed into the bloodstream.",
+    "url": "https://medlineplus.gov/ency/article/007279.htm"
+  },
+  "chronic": {
+    "definition": "Long-lasting — a condition that persists for a long time (usually more than 3 months) or keeps coming back.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "acute": {
+    "definition": "Short-term but often severe — a condition that starts suddenly and usually lasts a short time.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "bilateral": {
+    "definition": "On both sides — affecting both the left and right sides of the body.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "anterior": {
+    "definition": "The front — referring to the front part of the body or an organ.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "posterior": {
+    "definition": "The back — referring to the back part of the body or an organ.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "contraindicated": {
+    "definition": "Not recommended — a treatment or medication that should not be used because it could be harmful in your situation.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "sepsis": {
+    "definition": "A life-threatening condition where your body's response to an infection damages its own tissues and organs.",
+    "url": "https://medlineplus.gov/sepsis.html"
+  },
+  "ischemia": {
+    "definition": "Reduced blood flow to a part of the body, which means that area isn't getting enough oxygen.",
+    "url": "https://medlineplus.gov/ency/article/007264.htm"
+  },
+  "stenosis": {
+    "definition": "Abnormal narrowing of a passage in the body, such as a blood vessel or spinal canal.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "aneurysm": {
+    "definition": "A bulge or ballooning in a weakened area of a blood vessel wall, which can be dangerous if it ruptures.",
+    "url": "https://medlineplus.gov/aneurysms.html"
+  },
+  "hematoma": {
+    "definition": "A collection of blood outside the blood vessels, usually caused by an injury — similar to a deep bruise.",
+    "url": "https://medlineplus.gov/bruises.html"
+  },
+  "abscess": {
+    "definition": "A pocket of pus that forms when your body is fighting an infection, causing swelling and pain.",
+    "url": "https://medlineplus.gov/abscess.html"
+  },
+  "lesion": {
+    "definition": "An area of abnormal tissue in the body, which can be caused by injury, disease, or other conditions.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "neoplasm": {
+    "definition": "An abnormal growth of tissue — commonly called a tumor, which may be benign (not cancer) or malignant (cancer).",
+    "url": "https://medlineplus.gov/cancer.html"
+  },
+  "remission": {
+    "definition": "A decrease or disappearance of signs and symptoms of a disease, especially cancer.",
+    "url": "https://medlineplus.gov/cancer.html"
+  },
+  "relapse": {
+    "definition": "When a disease returns after a period of improvement or remission.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "prophylaxis": {
+    "definition": "Preventive treatment — actions taken to prevent a disease from occurring or spreading.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "palliative": {
+    "definition": "Treatment focused on providing relief from symptoms and improving quality of life, rather than curing the disease.",
+    "url": "https://medlineplus.gov/palliativecare.html"
+  },
+  "comorbidity": {
+    "definition": "Having two or more medical conditions at the same time — for example, having both diabetes and high blood pressure.",
+    "url": "https://medlineplus.gov/ency/article/002351.htm"
+  },
+  "immunodeficiency": {
+    "definition": "A weakened immune system that makes it harder for your body to fight infections and diseases.",
+    "url": "https://medlineplus.gov/immunesystemanddisorders.html"
+  },
+  "anticoagulant": {
+    "definition": "A blood thinner — medication that helps prevent blood clots from forming or getting bigger.",
+    "url": "https://medlineplus.gov/bloodthinners.html"
+  },
+  "analgesic": {
+    "definition": "A pain reliever — any medicine used to reduce or eliminate pain.",
+    "url": "https://medlineplus.gov/painrelievers.html"
+  },
+  "antipyretic": {
+    "definition": "A fever reducer — medication that lowers body temperature when you have a fever.",
+    "url": "https://medlineplus.gov/fever.html"
+  },
+  "antibiotic": {
+    "definition": "A medicine that kills bacteria or stops them from growing, used to treat bacterial infections.",
+    "url": "https://medlineplus.gov/antibiotics.html"
+  },
+  "antihypertensive": {
+    "definition": "A medication used to lower high blood pressure.",
+    "url": "https://medlineplus.gov/highbloodpressure.html"
+  },
+  "diuretic": {
+    "definition": "A water pill — medication that helps your kidneys remove extra water and salt from your body through urine.",
+    "url": "https://medlineplus.gov/ency/article/003095.htm"
+  },
+  "insulin": {
+    "definition": "A hormone made by the pancreas that helps sugar enter cells for energy. People with diabetes may need insulin injections.",
+    "url": "https://medlineplus.gov/insulin.html"
+  },
+  "glucose": {
+    "definition": "Blood sugar — the main type of sugar in your blood that your body uses for energy.",
+    "url": "https://medlineplus.gov/bloodsugar.html"
+  },
+  "cholesterol": {
+    "definition": "A waxy, fat-like substance in your blood. Your body needs some cholesterol, but too much can build up in your arteries.",
+    "url": "https://medlineplus.gov/cholesterol.html"
+  },
+  "triglyceride": {
+    "definition": "A type of fat found in your blood. High levels can increase your risk of heart disease.",
+    "url": "https://medlineplus.gov/triglycerides.html"
+  },
+  "hba1c": {
+    "definition": "A blood test that shows your average blood sugar level over the past 2-3 months, used to monitor diabetes control.",
+    "url": "https://medlineplus.gov/a1c.html"
+  },
+  "electrolyte": {
+    "definition": "Minerals in your blood (like sodium, potassium, calcium) that carry electrical charges and help your body function properly.",
+    "url": "https://medlineplus.gov/fluidandelectrolytebalance.html"
+  },
+  "potassium": {
+    "definition": "A mineral that helps your heart, muscles, and nerves work properly. Abnormal levels can be dangerous.",
+    "url": "https://medlineplus.gov/potassium.html"
+  },
+  "sodium": {
+    "definition": "A mineral (salt) that helps control fluid balance and blood pressure in your body.",
+    "url": "https://medlineplus.gov/sodium.html"
+  }
+}

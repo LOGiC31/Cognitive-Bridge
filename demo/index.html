@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthView Portal — Patient Summary</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f4f8;
+      color: #1a202c;
+      line-height: 1.6;
+    }
+
+    .portal-header {
+      background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .portal-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .portal-header .patient-info {
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    .portal-nav {
+      background: #2d3748;
+      padding: 0 32px;
+      display: flex;
+      gap: 0;
+    }
+
+    .portal-nav a {
+      color: #a0aec0;
+      text-decoration: none;
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .portal-nav a:hover { color: white; }
+    .portal-nav a.active {
+      color: white;
+      border-bottom-color: #63b3ed;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 24px auto;
+      padding: 0 24px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: #edf2f7;
+      padding: 12px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-header h2 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .card-header .date {
+      font-size: 12px;
+      color: #718096;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-body p {
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: #4a5568;
+    }
+
+    .card-body p:last-child { margin-bottom: 0; }
+
+    .section-label {
+      font-weight: 600;
+      color: #2d3748;
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    table.vitals {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    table.vitals th {
+      text-align: left;
+      padding: 8px 12px;
+      background: #f7fafc;
+      border-bottom: 1px solid #e2e8f0;
+      font-weight: 600;
+      color: #4a5568;
+    }
+
+    table.vitals td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #edf2f7;
+      color: #4a5568;
+    }
+
+    .flag-high { color: #e53e3e; font-weight: 600; }
+    .flag-low  { color: #dd6b20; font-weight: 600; }
+
+    .banner {
+      background: #ebf8ff;
+      border-left: 4px solid #3182ce;
+      padding: 14px 20px;
+      margin-bottom: 20px;
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: #2c5282;
+    }
+
+    .banner strong { color: #1a365d; }
+
+    .instructions {
+      background: #fffff0;
+      border: 1px dashed #d69e2e;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #744210;
+    }
+
+    .instructions h3 {
+      color: #975a16;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .instructions ol {
+      padding-left: 20px;
+    }
+
+    .instructions li {
+      margin-bottom: 4px;
+    }
+
+    .instructions code {
+      background: #fefcbf;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="portal-header">
+    <div>
+      <h1>HealthView Patient Portal</h1>
+      <div class="patient-info">Demo Patient Account — For Testing Only</div>
+    </div>
+    <div style="text-align: right;">
+      <div style="font-size: 14px; font-weight: 600;">Jane Doe</div>
+      <div style="font-size: 12px; opacity: 0.8;">DOB: 01/15/1958 | MRN: 0012345</div>
+    </div>
+  </div>
+
+  <div class="portal-nav">
+    <a href="#" class="active">Clinical Notes</a>
+    <a href="#">Lab Results</a>
+    <a href="#">Medications</a>
+    <a href="#">Appointments</a>
+    <a href="#">Messages</a>
+  </div>
+
+  <div class="container">
+    <div class="instructions">
+      <h3>Cognitive Bridge Demo Instructions</h3>
+      <ol>
+        <li>Build the extension: <code>npm run build</code></li>
+        <li>Open Chrome and navigate to <code>chrome://extensions</code></li>
+        <li>Enable "Developer mode" and click "Load unpacked"</li>
+        <li>Select the <code>dist/</code> folder</li>
+        <li>Return to this page — medical terms should be highlighted automatically</li>
+        <li>Hover over highlighted terms to see simplified explanations</li>
+        <li>Open DevTools Network tab to verify zero external requests during inference</li>
+      </ol>
+    </div>
+
+    <div class="banner">
+      <strong>Note:</strong> This is a simulated patient portal for demonstration purposes.
+      All patient data shown below is fictional and does not represent any real individual.
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Office Visit — Primary Care</h2>
+        <span class="date">March 15, 2026</span>
+      </div>
+      <div class="card-body">
+        <span class="section-label">Chief Complaint</span>
+        <p>Patient presents with persistent dyspnea on exertion and bilateral lower extremity edema for the past 3 weeks. She also reports increasing fatigue and orthopnea requiring 3 pillows at night.</p>
+
+        <span class="section-label">History of Present Illness</span>
+        <p>Ms. Doe is a 68-year-old female with a past medical history significant for hypertension, diabetes mellitus type 2, hyperlipidemia, and atrial fibrillation, who presents with worsening heart failure symptoms. She was previously diagnosed with myocardial infarction 2 years ago, after which echocardiogram revealed left ventricular ejection fraction of 35%, consistent with moderate systolic dysfunction.</p>
+
+        <p>Her diabetes mellitus has been poorly controlled with hemoglobin A1c of 9.2% despite adherence to metformin 1000mg twice daily. She also takes lisinopril 20mg daily for hypertension and atorvastatin 40mg for hyperlipidemia. Her atrial fibrillation is managed with rate control using metoprolol and anticoagulation with warfarin.</p>
+
+        <span class="section-label">Assessment and Plan</span>
+        <p>1. Acute decompensated heart failure — Will initiate intravenous diuretic therapy with furosemide 40mg IV. Echocardiogram ordered to reassess left ventricular function. Cardiology consultation requested for possible cardiac catheterization.</p>
+
+        <p>2. Diabetes mellitus type 2, poorly controlled — Hemoglobin A1c of 9.2% indicates suboptimal glycemic control. Will add insulin glargine 10 units at bedtime. Continue metformin. Endocrinology referral placed.</p>
+
+        <p>3. Atrial fibrillation — Currently in rate-controlled atrial fibrillation. Continue metoprolol and warfarin. INR target 2.0-3.0. Will recheck INR in 1 week.</p>
+
+        <p>4. Chronic kidney disease stage 3b — Estimated GFR of 38 mL/min, creatinine 2.1 mg/dL. Monitor renal function closely with diuretic therapy. Nephrology referral if creatinine rises above 2.5.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Laboratory Results</h2>
+        <span class="date">March 15, 2026</span>
+      </div>
+      <div class="card-body">
+        <table class="vitals">
+          <thead>
+            <tr>
+              <th>Test</th>
+              <th>Result</th>
+              <th>Reference Range</th>
+              <th>Flag</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Hemoglobin</td>
+              <td>10.2 g/dL</td>
+              <td>12.0-16.0 g/dL</td>
+              <td class="flag-low">LOW</td>
+            </tr>
+            <tr>
+              <td>Hemoglobin A1c</td>
+              <td>9.2%</td>
+              <td>&lt; 5.7%</td>
+              <td class="flag-high">HIGH</td>
+            </tr>
+            <tr>
+              <td>Creatinine</td>
+              <td>2.1 mg/dL</td>
+              <td>0.7-1.3 mg/dL</td>
+              <td class="flag-high">HIGH</td>
+            </tr>
+            <tr>
+              <td>BUN (Blood Urea Nitrogen)</td>
+              <td>38 mg/dL</td>
+              <td>7-20 mg/dL</td>
+              <td class="flag-high">HIGH</td>
+            </tr>
+            <tr>
+              <td>Potassium</td>
+              <td>5.4 mEq/L</td>
+              <td>3.5-5.0 mEq/L</td>
+              <td class="flag-high">HIGH</td>
+            </tr>
+            <tr>
+              <td>Sodium</td>
+              <td>131 mEq/L</td>
+              <td>136-145 mEq/L</td>
+              <td class="flag-low">LOW</td>
+            </tr>
+            <tr>
+              <td>BNP (B-type Natriuretic Peptide)</td>
+              <td>1,250 pg/mL</td>
+              <td>&lt; 100 pg/mL</td>
+              <td class="flag-high">HIGH</td>
+            </tr>
+            <tr>
+              <td>Troponin I</td>
+              <td>0.04 ng/mL</td>
+              <td>&lt; 0.04 ng/mL</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>INR</td>
+              <td>2.3</td>
+              <td>2.0-3.0 (therapeutic)</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Albumin</td>
+              <td>2.8 g/dL</td>
+              <td>3.5-5.0 g/dL</td>
+              <td class="flag-low">LOW</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Radiology Report — Chest X-Ray</h2>
+        <span class="date">March 15, 2026</span>
+      </div>
+      <div class="card-body">
+        <span class="section-label">Findings</span>
+        <p>PA and lateral chest radiograph demonstrates cardiomegaly with cardiothoracic ratio of 0.62. Bilateral pleural effusions are noted, larger on the right. Bilateral interstitial edema with peribronchial cuffing is present, consistent with pulmonary edema. No focal consolidation to suggest pneumonia. No pneumothorax.</p>
+
+        <span class="section-label">Impression</span>
+        <p>Cardiomegaly with bilateral pleural effusions and pulmonary edema, consistent with congestive heart failure. Clinical correlation recommended.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Current Medications</h2>
+        <span class="date">Updated: March 15, 2026</span>
+      </div>
+      <div class="card-body">
+        <p><strong>Metformin</strong> 1000mg — Take one tablet by mouth twice daily with meals for diabetes mellitus.</p>
+        <p><strong>Lisinopril</strong> 20mg — Take one tablet by mouth once daily for hypertension. Do not take with potassium supplements.</p>
+        <p><strong>Atorvastatin</strong> 40mg — Take one tablet by mouth at bedtime for hyperlipidemia (high cholesterol).</p>
+        <p><strong>Metoprolol succinate</strong> 50mg — Take one tablet by mouth once daily for atrial fibrillation rate control.</p>
+        <p><strong>Warfarin</strong> 5mg — Take one tablet by mouth once daily for anticoagulation. INR monitoring required.</p>
+        <p><strong>Furosemide</strong> 40mg IV — Administered intravenously for acute decompensated heart failure.</p>
+        <p><strong>Insulin glargine</strong> 10 units — Inject subcutaneously at bedtime for diabetes mellitus type 2.</p>
+        <p><strong>Acetaminophen</strong> 500mg — Take one to two tablets by mouth every 6 hours as needed for pain. Maximum 3000mg per day.</p>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

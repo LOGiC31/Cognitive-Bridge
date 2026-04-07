@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.DS_Store
+*.pyc
+__pycache__/
+training/ner/output/
+training/ner/onnx_model/
+training/ner/onnx_quantized/
+training/simplification/output/
+training/simplification/onnx_model/
+training/simplification/onnx_quantized/
+training/data/bc5cdr_processed/
+training/data/simplification_pairs/
+.env

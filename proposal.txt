@@ -1,0 +1,62 @@
+Project Proposal: The "Cognitive Bridge" - Patient-Centric Medical Jargon Simplifier
+
+
+Yonghee Han UIN: 337002024 MS-AI, TAMU
+???????????????????
+
+Vinay Singh UIN: 335008079 MCS, TAMU
+???????????????????
+
+Shanti Patel UIN: 931007551 MCS, TAMU
+??????????????????
+
+
+
+
+
+Abstract
+This project proposes "Cognitive Bridge," a privacy-first Chrome extension that simplifies complex medical jargon into layperson terms in real-time. By utilizing local LLM inference via Transformers.js, we aim to bridge the read- ability gap in healthcare while ensuring strict data privacy for sensitive patient information.
+1 Introduction
+Digital healthcare portals like MyChart provide patients with direct access to clinical notes, yet a significant "readability gap" persists. Medical documentation often requires reading skills above a 10th-grade level, while the average adult reads at an 8th-grade level. This linguistic barrier is a social determinant of health; misunderstanding di- agnoses often leads to treatment non-adherence and increased patient anxiety. Our "Cognitive Bridge" addresses this by building a local-first Chrome ex- tension that acts as a real-time translator, focusing on Semantic Preservation to ensure critical clinical nuances are retained.
+2 Related Work
+2.1 Medical Text Simplification
+Current research often utilizes sequence-to- sequence models like T5 (Raffel et al., 2020). How- ever, models may suffer from semantic drift, where critical clinical terms are over-simplified or omit- ted, losing diagnostic nuance (Vora et al., 2025). While some existing applications provide glossary tooltips, they often lack the context-aware rewriting needed for patient comprehension.
+2.2 Privacy-First & Local Inference
+Most state-of-the-art NLP solutions rely on cloud- based APIs, posing risks for Personal Health Infor- mation (PHI). Recent advances in WebAssembly and Transformers.js have enabled local-first infer- ence (Xenova, 2023). "Cognitive Bridge" ensures
+
+all PHI remains on the client-side, making zero net- work requests for inference to guarantee privacy.
+3 Designs
+Our architecture Figure 1 ensures no text is sent to external servers. To meet Manifest V3 constraints, we run NER and simplification locally via Trans- formers.js.
+3.1 Technical Pipeline & Safety
+The system uses a MutationObserver to detect medical context. We deploy a DistilBERT model fine-tuned on the BC5CDR dataset for NER (Li et al., 2016). To ensure safety, we adopt a pol- icy where full-sentence simplification is triggered only when the model's confidence-computed from the NER entity scores and the simplification model's sequence log-probability-exceeds a spe- cific threshold. When confidence is low, the system defaults to showing local retrieval-based tooltips from MedlinePlus to prevent hallucinations.
+3.2 Optimization & Deployment
+Models are converted to ONNX and optimized via 8-bit quantization, targeting a reduced foot- print (from ~200MB to ~50MB) for faster load- ing. Tooltips are injected via a Shadow DOM to avoid CSS style conflicts with the host patient portal. This setup ensures zero network requests during inference, and we will report client-side latency in milliseconds.
+
+4 Expected Outcomes
+4.1 Planned Demo & Data
+Our primary data source is public patient educa- tion texts (MedlinePlus, CDC). Clinical datasets (MIMIC-III) will be used as an optional extension upon approval. We will demo the extension on a sample patient portal, showing (i) entity highlight-
+
+
+
+Figure 1: System architecture of the Cognitive Bridge extension. Medical text is detected via MutationObserver and processed locally. A DistilBERT-based NER model routes the text to either a T5 simplification engine or a MedlinePlus retrieval database based on a confidence threshold, ensuring zero external network requests.
+
+
+ing, (ii) instant tooltip glossary, and (iii) verified zero-network requests via DevTools logging.
+4.2 Evaluation & Baselines
+We compare our system against two baselines: (1) glossary-only (no rewrite) and (2) an off-the-shelf T5 model. Metrics include the Flesch-Kincaid Grade Level, SARI score (Xu et al., 2016), and an Entity Preservation Rate (EPR) to verify that clinical entities are correctly explained or retained.
+5 Expected Timeline
+• Mar 6 - Mar 27: Data curation (Medline- Plus/CDC) and T5 fine-tuning.
+• Mar 30 - Apr 17: Model quantization (ONNX), MV3 integration, and UI/UX.
+• Apr 20 - Apr 27: System testing and Project Presentations.
+• Apr 30: Final Project Report submission.
+6 Task Assignment
+• Yonghee: Lead for Bio-NER and Simplifica- tion models, including fine-tuning and evalua- tion protocol.
+• Vinay: Extension infrastructure, ONNX quan- tization, and Manifest V3 packaging.
+• Shanti: UI/UX design, Shadow DOM imple- mentation, and dataset curation for evaluation.
+
+References
+Jiao Li, Yueping Sun, Robin J Johnson, and 1 others. 2016. Biocreative v cdr task: Corpus and perfor- mance metrics. Database, 2016.
+Colin Raffel, Noam Shazeer, Adam Roberts, and 1 oth- ers. 2020. Exploring the limits of transfer learning with a unified text-to-text transformer. Journal of Machine Learning Research, 21:1-67.
+Aayush Vora and 1 others. 2025. S-3 pipeline for biomedical text simplification. In Proceedings of the Workshop on Text Simplification, Accessibility, and Readability (TSAR). Proposes a semantic-aware pipeline for simplifying biomedical text while re- ducing meaning distortion and preserving clinical accuracy.
+Xenova. 2023. Transformers.js: State-of-the-art ma- chine learning for the web. ???????????????????? ???????????????????????.
+Wei Xu, Courtney Napoles, Ellie Pavlick, and 1 others. 2016. Optimizing statistical machine translation for text simplification. In Transactions of the Association for Computational Linguistics, volume 4, pages 401- 415.

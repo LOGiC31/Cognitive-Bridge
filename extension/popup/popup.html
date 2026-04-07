@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cognitive Bridge</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <div class="logo-row">
+        <img src="../icons/icon48.png" alt="Cognitive Bridge" class="logo">
+        <h1>Cognitive Bridge</h1>
+      </div>
+      <p class="tagline">Medical jargon simplified locally &amp; privately</p>
+    </header>
+
+    <section class="controls">
+      <div class="toggle-row">
+        <span class="label">Extension Active</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-active" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="threshold-row">
+        <label for="confidence-threshold" class="label">
+          Confidence Threshold: <span id="threshold-value">0.75</span>
+        </label>
+        <input type="range" id="confidence-threshold" min="0.1" max="1.0" step="0.05" value="0.75">
+      </div>
+    </section>
+
+    <section class="status-section">
+      <h2>Model Status</h2>
+      <div class="status-grid">
+        <div class="status-item">
+          <span class="status-label">NER Model</span>
+          <span class="status-badge" id="ner-status">Not Loaded</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Simplification</span>
+          <span class="status-badge" id="t5-status">Not Loaded</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-section">
+      <h2>Session Stats</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-value" id="entities-found">0</span>
+          <span class="stat-label">Entities Found</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="simplifications-made">0</span>
+          <span class="stat-label">Simplifications</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="glossary-lookups">0</span>
+          <span class="stat-label">Glossary Lookups</span>
+        </div>
+      </div>
+    </section>
+
+    <footer class="popup-footer">
+      <p>All processing happens locally. Zero data leaves your device.</p>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
