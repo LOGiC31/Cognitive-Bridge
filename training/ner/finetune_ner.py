@@ -13,6 +13,7 @@ Output:
 """
 
 import os
+import torch
 import numpy as np
 from datasets import load_from_disk
 from transformers import (
@@ -35,10 +36,10 @@ LABEL_LIST = ["O", "B-Chemical", "I-Chemical", "B-Disease", "I-Disease"]
 LABEL2ID = {label: i for i, label in enumerate(LABEL_LIST)}
 ID2LABEL = {i: label for i, label in enumerate(LABEL_LIST)}
 
-MAX_LENGTH = 128
-LEARNING_RATE = 2e-5
-BATCH_SIZE = 16
-NUM_EPOCHS = 3
+MAX_LENGTH = 512
+LEARNING_RATE = 5e-5
+BATCH_SIZE = 8
+NUM_EPOCHS = 10
 WEIGHT_DECAY = 0.01
 
 
@@ -129,9 +130,11 @@ def main():
 
     data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
 
+    use_mps = torch.backends.mps.is_available()
+
     training_args = TrainingArguments(
         output_dir=OUTPUT_DIR,
-        evaluation_strategy="epoch",
+        eval_strategy="epoch",
         save_strategy="epoch",
         learning_rate=LEARNING_RATE,
         per_device_train_batch_size=BATCH_SIZE,
@@ -143,6 +146,8 @@ def main():
         greater_is_better=True,
         logging_steps=50,
         fp16=False,
+        use_mps_device=use_mps,
+        dataloader_pin_memory=False,
         report_to="none",
     )
 

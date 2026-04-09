@@ -12,3 +12,4 @@ training/simplification/onnx_quantized/
 training/data/bc5cdr_processed/
 training/data/simplification_pairs/
 .env
+.cursor/*

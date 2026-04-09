@@ -13,6 +13,7 @@ Output:
 """
 
 import os
+import torch
 import numpy as np
 from datasets import load_from_disk
 from transformers import (
@@ -117,9 +118,11 @@ def main():
 
     data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model)
 
+    use_mps = torch.backends.mps.is_available()
+
     training_args = Seq2SeqTrainingArguments(
         output_dir=OUTPUT_DIR,
-        evaluation_strategy="epoch",
+        eval_strategy="epoch",
         save_strategy="epoch",
         learning_rate=LEARNING_RATE,
         per_device_train_batch_size=BATCH_SIZE,
@@ -127,6 +130,8 @@ def main():
         num_train_epochs=NUM_EPOCHS,
         weight_decay=WEIGHT_DECAY,
         predict_with_generate=True,
+        use_mps_device=use_mps,
+        dataloader_pin_memory=False,
         generation_max_length=MAX_TARGET_LENGTH,
         load_best_model_at_end=True,
         metric_for_best_model="rougeL",

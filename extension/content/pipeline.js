@@ -6,6 +6,10 @@ env.useBrowserCache = true;
 const NER_MODEL = 'Xenova/bert-base-NER';
 const T5_MODEL = 'Xenova/LaMini-Flan-T5-77M';
 
+// Custom fine-tuned models (swap in once training quality improves):
+// const NER_MODEL = 'LOGiC31/cognitive-bridge-ner';
+// const T5_MODEL = 'LOGiC31/cognitive-bridge-t5';
+
 const SIMPLIFY_MAX_LENGTH = 256;
 const SIMPLIFY_MIN_LENGTH = 10;
 
@@ -34,12 +38,15 @@ export class MedicalPipeline {
     this.reportModelStatus('ner', 'loading');
 
     try {
+      console.log(`[CognitiveBridge] Loading NER model: ${NER_MODEL} (quantized: true)`);
       this.nerPipeline = await pipeline('token-classification', NER_MODEL, {
         quantized: true,
       });
+      console.log(`[CognitiveBridge] NER model loaded successfully: ${NER_MODEL}`);
       this.reportModelStatus('ner', 'loaded');
       return this.nerPipeline;
     } catch (err) {
+      console.error(`[CognitiveBridge] NER model failed to load:`, err);
       this.reportModelStatus('ner', 'error');
       throw err;
     } finally {
@@ -58,12 +65,15 @@ export class MedicalPipeline {
     this.reportModelStatus('t5', 'loading');
 
     try {
+      console.log(`[CognitiveBridge] Loading T5 model: ${T5_MODEL} (quantized: true)`);
       this.t5Pipeline = await pipeline('text2text-generation', T5_MODEL, {
         quantized: true,
       });
+      console.log(`[CognitiveBridge] T5 model loaded successfully: ${T5_MODEL}`);
       this.reportModelStatus('t5', 'loaded');
       return this.t5Pipeline;
     } catch (err) {
+      console.error(`[CognitiveBridge] T5 model failed to load:`, err);
       this.reportModelStatus('t5', 'error');
       throw err;
     } finally {
@@ -91,6 +101,11 @@ export class MedicalPipeline {
     const nerResults = await ner(text, { ignore_labels: [] });
     const entities = this.mergeEntities(nerResults);
 
+    console.log(`[CognitiveBridge] NER found ${entities.length} entities in: "${text.slice(0, 80)}..."`);
+    if (entities.length > 0) {
+      console.table(entities.map(e => ({ word: e.word, label: e.label, score: e.score.toFixed(3) })));
+    }
+
     if (entities.length === 0) return [];
 
     const results = [];
@@ -99,13 +114,18 @@ export class MedicalPipeline {
       const avgScore = entity.score;
 
       if (avgScore >= this.confidenceThreshold) {
+        console.log(`[CognitiveBridge] "${entity.word}" (${avgScore.toFixed(3)}) -> T5 simplification`);
         const simplified = await this.simplifyEntity(text, entity);
+        if (simplified) {
+          console.log(`[CognitiveBridge] T5 output: "${simplified.slice(0, 100)}"`);
+        }
         results.push({
           ...entity,
           type: simplified ? 'simplification' : 'glossary',
           explanation: simplified || this.glossaryLookup(entity.word, glossary),
         });
       } else {
+        console.log(`[CognitiveBridge] "${entity.word}" (${avgScore.toFixed(3)}) -> glossary fallback`);
         const definition = this.glossaryLookup(entity.word, glossary);
         results.push({
           ...entity,
