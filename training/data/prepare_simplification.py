@@ -1,8 +1,12 @@
 """
 Prepare parallel medical simplification training data.
 
-Curates sentence pairs (complex medical -> simplified) from public sources
-including MedlinePlus, CDC health literacy materials, and synthetic examples.
+Loads the GEM/cochrane-simplification dataset (~4,500 paragraph-level pairs
+of Cochrane systematic review abstracts and their plain-language summaries)
+and supplements with hand-curated sentence-level clinical pairs.
+
+The prompt prefix matches the Chrome extension's inference prompt so the
+fine-tuned model responds to the same instruction at deployment time.
 
 Usage:
     python training/data/prepare_simplification.py
@@ -13,9 +17,11 @@ Output:
 
 import json
 import os
-from datasets import Dataset, DatasetDict
+from datasets import Dataset, DatasetDict, load_dataset, concatenate_datasets
 
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "simplification_pairs")
+
+PREFIX = "Simplify this medical text for a patient: "
 
 CURATED_PAIRS = [
     {
@@ -121,26 +127,52 @@ CURATED_PAIRS = [
 ]
 
 
-def build_dataset():
-    """Create the simplification dataset from curated pairs."""
-    print(f"Building dataset with {len(CURATED_PAIRS)} curated pairs...")
-
-    inputs = [f"simplify: {pair['complex']}" for pair in CURATED_PAIRS]
-    targets = [pair["simple"] for pair in CURATED_PAIRS]
-
-    n = len(inputs)
-    split_idx = int(n * 0.8)
-
-    train_data = {"input_text": inputs[:split_idx], "target_text": targets[:split_idx]}
-    val_data = {"input_text": inputs[split_idx:], "target_text": targets[split_idx:]}
-
-    dataset = DatasetDict({
-        "train": Dataset.from_dict(train_data),
-        "validation": Dataset.from_dict(val_data),
+def load_cochrane():
+    """Load the GEM/cochrane-simplification dataset from JSON files."""
+    print("Loading GEM/cochrane-simplification dataset...")
+    base = "hf://datasets/GEM/cochrane-simplification"
+    ds = load_dataset("json", data_files={
+        "train": f"{base}/train.json",
+        "validation": f"{base}/validation.json",
+        "test": f"{base}/test.json",
     })
+    for split in ds:
+        print(f"  {split}: {len(ds[split])} examples")
+    return ds
 
-    print(f"  Train: {len(dataset['train'])} examples")
-    print(f"  Validation: {len(dataset['validation'])} examples")
+
+def build_dataset():
+    """Create the combined simplification dataset."""
+    cochrane = load_cochrane()
+
+    curated_inputs = [PREFIX + p["complex"] for p in CURATED_PAIRS]
+    curated_targets = [p["simple"] for p in CURATED_PAIRS]
+    curated_ds = Dataset.from_dict({
+        "input_text": curated_inputs,
+        "target_text": curated_targets,
+    })
+    print(f"\nCurated pairs: {len(curated_ds)}")
+
+    splits = {}
+    for split_name in ["train", "validation", "test"]:
+        split_data = cochrane[split_name]
+        cochrane_inputs = [PREFIX + row["source"] for row in split_data]
+        cochrane_targets = [row["target"] for row in split_data]
+        cochrane_ds = Dataset.from_dict({
+            "input_text": cochrane_inputs,
+            "target_text": cochrane_targets,
+        })
+
+        if split_name == "train":
+            combined = concatenate_datasets([cochrane_ds, curated_ds])
+            print(f"  {split_name}: {len(cochrane_ds)} (Cochrane) + {len(curated_ds)} (curated) = {len(combined)}")
+        else:
+            combined = cochrane_ds
+            print(f"  {split_name}: {len(combined)}")
+
+        splits[split_name] = combined
+
+    dataset = DatasetDict(splits)
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     dataset.save_to_disk(OUTPUT_DIR)
@@ -149,10 +181,20 @@ def build_dataset():
     with open(os.path.join(OUTPUT_DIR, "pairs.json"), "w") as f:
         json.dump(CURATED_PAIRS, f, indent=2)
 
-    print("\nSample pair:")
-    print(f"  Complex: {CURATED_PAIRS[0]['complex'][:80]}...")
-    print(f"  Simple:  {CURATED_PAIRS[0]['simple'][:80]}...")
+    print("\nSample (Cochrane):")
+    s = dataset["train"][0]
+    print(f"  Input:  {s['input_text'][:100]}...")
+    print(f"  Target: {s['target_text'][:100]}...")
+
+    print("\nSample (curated):")
+    s = dataset["train"][-1]
+    print(f"  Input:  {s['input_text'][:100]}...")
+    print(f"  Target: {s['target_text'][:100]}...")
 
 
 if __name__ == "__main__":
-    build_dataset()
+    if os.path.isfile(os.path.join(OUTPUT_DIR, "dataset_dict.json")):
+        print(f"Dataset already exists at {OUTPUT_DIR}, skipping preparation.")
+        print("Delete the directory to re-prepare: rm -rf " + OUTPUT_DIR)
+    else:
+        build_dataset()

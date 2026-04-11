@@ -3,12 +3,8 @@ import { pipeline, env } from '@xenova/transformers';
 env.allowLocalModels = false;
 env.useBrowserCache = true;
 
-const NER_MODEL = 'Xenova/bert-base-NER';
-const T5_MODEL = 'Xenova/LaMini-Flan-T5-77M';
-
-// Custom fine-tuned models (swap in once training quality improves):
-// const NER_MODEL = 'LOGiC31/cognitive-bridge-ner';
-// const T5_MODEL = 'LOGiC31/cognitive-bridge-t5';
+const NER_MODEL = 'LOGiC31/cognitive-bridge-ner';
+const T5_MODEL = 'LOGiC31/cognitive-bridge-t5';
 
 const SIMPLIFY_MAX_LENGTH = 256;
 const SIMPLIFY_MIN_LENGTH = 10;
