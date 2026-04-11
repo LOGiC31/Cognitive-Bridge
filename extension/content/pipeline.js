@@ -17,6 +17,8 @@ export class MedicalPipeline {
     this.confidenceThreshold = 0.75;
     this.nerLoading = false;
     this.t5Loading = false;
+    this.sentenceCache = new Map();
+    this.termCache = new Map();
   }
 
   setThreshold(val) {
@@ -105,15 +107,25 @@ export class MedicalPipeline {
     if (entities.length === 0) return [];
 
     const results = [];
+    const seen = new Set();
 
     for (const entity of entities) {
+      const termKey = entity.word.trim().toLowerCase();
+      if (seen.has(termKey)) {
+        const prev = results.find(r => r.word.trim().toLowerCase() === termKey);
+        if (prev) {
+          results.push({ ...entity, type: prev.type, explanation: prev.explanation });
+        }
+        continue;
+      }
+      seen.add(termKey);
+
       const avgScore = entity.score;
 
       if (avgScore >= this.confidenceThreshold) {
-        console.log(`[CognitiveBridge] "${entity.word}" (${avgScore.toFixed(3)}) -> T5 simplification`);
         const simplified = await this.simplifyEntity(text, entity);
         if (simplified) {
-          console.log(`[CognitiveBridge] T5 output: "${simplified.slice(0, 100)}"`);
+          console.log(`[CognitiveBridge] "${entity.word}" -> "${simplified.slice(0, 80)}"`);
         }
         results.push({
           ...entity,
@@ -121,7 +133,6 @@ export class MedicalPipeline {
           explanation: simplified || this.glossaryLookup(entity.word, glossary),
         });
       } else {
-        console.log(`[CognitiveBridge] "${entity.word}" (${avgScore.toFixed(3)}) -> glossary fallback`);
         const definition = this.glossaryLookup(entity.word, glossary);
         results.push({
           ...entity,
@@ -170,11 +181,24 @@ export class MedicalPipeline {
   }
 
   async simplifyEntity(fullText, entity) {
+    const termKey = entity.word.trim().toLowerCase();
+    if (this.termCache.has(termKey)) {
+      return this.termCache.get(termKey);
+    }
+
     try {
       const t5 = await this.loadT5();
 
       const sentence = extractSentence(fullText, entity.start, entity.end);
-      const prompt = `Simplify this medical text for a patient: ${sentence}`;
+      const term = entity.word.trim();
+      const prompt = `Simplify this medical text for a patient: ${term} means`;
+
+      const sentenceCacheKey = prompt;
+      if (this.sentenceCache.has(sentenceCacheKey)) {
+        const result = this.sentenceCache.get(sentenceCacheKey);
+        this.termCache.set(termKey, result);
+        return result;
+      }
 
       const output = await t5(prompt, {
         max_new_tokens: SIMPLIFY_MAX_LENGTH,
@@ -183,10 +207,14 @@ export class MedicalPipeline {
       });
 
       const simplified = output[0]?.generated_text?.trim();
-      if (simplified && simplified.length > 5 && simplified !== sentence) {
-        return simplified;
+      let result = null;
+      if (simplified && simplified.length > 5 && simplified.toLowerCase() !== term.toLowerCase()) {
+        result = simplified;
       }
-      return null;
+
+      this.sentenceCache.set(sentenceCacheKey, result);
+      this.termCache.set(termKey, result);
+      return result;
     } catch (err) {
       console.warn('[CognitiveBridge] T5 simplification error:', err);
       return null;
