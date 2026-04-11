@@ -1,7 +1,8 @@
 """
 Export the fine-tuned T5 model to ONNX format with 8-bit quantization.
 
-Converts the T5 simplification model (encoder + decoder) to ONNX and applies
+Converts the T5 simplification model to ONNX with merged decoders
+(combining with-past and without-past into one file) and applies
 dynamic quantization for browser deployment via Transformers.js.
 
 Usage:
@@ -24,15 +25,17 @@ QUANTIZED_OUTPUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "onn
 
 
 def export_to_onnx():
-    """Export T5 to ONNX (encoder + decoder)."""
+    """Export T5 to ONNX with merged decoder (required by Transformers.js)."""
     print(f"Exporting T5 model from {MODEL_PATH} to ONNX...")
 
+    if os.path.exists(ONNX_OUTPUT):
+        shutil.rmtree(ONNX_OUTPUT)
     os.makedirs(ONNX_OUTPUT, exist_ok=True)
 
     main_export(
         model_name_or_path=MODEL_PATH,
         output=Path(ONNX_OUTPUT),
-        task="text2text-generation",
+        task="text2text-generation-with-past",
         opset=14,
     )
 
@@ -56,6 +59,8 @@ def quantize_model(onnx_path):
 
     print("\nApplying 8-bit dynamic quantization...")
 
+    if os.path.exists(QUANTIZED_OUTPUT):
+        shutil.rmtree(QUANTIZED_OUTPUT)
     os.makedirs(QUANTIZED_OUTPUT, exist_ok=True)
 
     for src_file in Path(onnx_path).iterdir():
