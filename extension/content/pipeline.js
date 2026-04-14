@@ -3,11 +3,21 @@ import { pipeline, env } from '@xenova/transformers';
 env.allowLocalModels = false;
 env.useBrowserCache = true;
 
+// Match training/data/prepare_simplification.py PREFIX (full sentence after prefix, not "term means").
+try {
+  const ortEnv = env.backends?.onnx?.env;
+  if (ortEnv) ortEnv.logLevel = 'error';
+} catch {
+  // ignore if onnx env shape differs across versions
+}
+
 const NER_MODEL = 'LOGiC31/cognitive-bridge-ner';
 const T5_MODEL = 'LOGiC31/cognitive-bridge-t5';
 
-const SIMPLIFY_MAX_LENGTH = 256;
-const SIMPLIFY_MIN_LENGTH = 10;
+/** Same string as training — input must be clinical text, not a bare term + "means". */
+const SIMPLIFY_PREFIX = 'Simplify this medical text for a patient: ';
+
+const SIMPLIFY_MAX_NEW_TOKENS = 256;
 
 export class MedicalPipeline {
   constructor() {
@@ -17,8 +27,8 @@ export class MedicalPipeline {
     this.confidenceThreshold = 0.75;
     this.nerLoading = false;
     this.t5Loading = false;
+    /** Keyed by full simplification prompt (context + term), not bare term. */
     this.sentenceCache = new Map();
-    this.termCache = new Map();
   }
 
   setThreshold(val) {
@@ -124,9 +134,6 @@ export class MedicalPipeline {
 
       if (avgScore >= this.confidenceThreshold) {
         const simplified = await this.simplifyEntity(text, entity);
-        if (simplified) {
-          console.log(`[CognitiveBridge] "${entity.word}" -> "${simplified.slice(0, 80)}"`);
-        }
         results.push({
           ...entity,
           type: simplified ? 'simplification' : 'glossary',
@@ -181,39 +188,37 @@ export class MedicalPipeline {
   }
 
   async simplifyEntity(fullText, entity) {
-    const termKey = entity.word.trim().toLowerCase();
-    if (this.termCache.has(termKey)) {
-      return this.termCache.get(termKey);
-    }
-
     try {
       const t5 = await this.loadT5();
 
-      const sentence = extractSentence(fullText, entity.start, entity.end);
       const term = entity.word.trim();
-      const prompt = `Simplify this medical text for a patient: ${term} means`;
+      const prompt = buildSimplificationPrompt(fullText, entity);
 
-      const sentenceCacheKey = prompt;
-      if (this.sentenceCache.has(sentenceCacheKey)) {
-        const result = this.sentenceCache.get(sentenceCacheKey);
-        this.termCache.set(termKey, result);
-        return result;
+      if (this.sentenceCache.has(prompt)) {
+        return this.sentenceCache.get(prompt);
       }
 
       const output = await t5(prompt, {
-        max_new_tokens: SIMPLIFY_MAX_LENGTH,
-        min_length: SIMPLIFY_MIN_LENGTH,
+        max_new_tokens: SIMPLIFY_MAX_NEW_TOKENS,
         do_sample: false,
       });
 
       const simplified = output[0]?.generated_text?.trim();
       let result = null;
-      if (simplified && simplified.length > 5 && simplified.toLowerCase() !== term.toLowerCase()) {
+      if (
+        simplified &&
+        simplified.length > 5 &&
+        simplified.toLowerCase() !== term.toLowerCase() &&
+        !isLowQualitySimplification(simplified)
+      ) {
         result = simplified;
       }
 
-      this.sentenceCache.set(sentenceCacheKey, result);
-      this.termCache.set(termKey, result);
+      this.sentenceCache.set(prompt, result);
+
+      if (result) {
+        console.log(`[CognitiveBridge] T5: "${entity.word}" -> "${result.slice(0, 80)}${result.length > 80 ? '…' : ''}"`);
+      }
       return result;
     } catch (err) {
       console.warn('[CognitiveBridge] T5 simplification error:', err);
@@ -257,6 +262,30 @@ export class MedicalPipeline {
       // popup may not be open
     }
   }
+}
+
+function buildSimplificationPrompt(fullText, entity) {
+  const term = entity.word.trim();
+  let sentence = extractSentence(fullText, entity.start, entity.end).trim();
+  const termAlpha = term.toLowerCase().replace(/[^a-z0-9]+/g, '');
+  const sentAlpha = sentence.toLowerCase().replace(/[^a-z0-9]+/g, '');
+  if (!sentence || sentence.length < 8) {
+    sentence = `The patient has ${term}.`;
+  } else if (termAlpha.length >= 3 && !sentAlpha.includes(termAlpha)) {
+    sentence = `${sentence} (mentions ${term})`;
+  }
+  return SIMPLIFY_PREFIX + sentence;
+}
+
+/** Drop repetitive template completions the model sometimes emits off-distribution. */
+function isLowQualitySimplification(text) {
+  const t = text.toLowerCase();
+  if ((t.match(/this is a medical text for a patient/g) || []).length >= 2) return true;
+  if (/^this is a medical text for a patient\.?\s*$/i.test(text.trim())) return true;
+  if (t.startsWith('this is a medical procedure that involves a person\'s blood pressure') && text.length < 160) {
+    return true;
+  }
+  return false;
 }
 
 function extractSentence(text, start, end) {
