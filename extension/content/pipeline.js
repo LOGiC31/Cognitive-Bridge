@@ -14,10 +14,16 @@ try {
 const NER_MODEL = 'LOGiC31/cognitive-bridge-ner';
 const T5_MODEL = 'LOGiC31/cognitive-bridge-t5';
 
-/** Same string as training — input must be clinical text, not a bare term + "means". */
+/**
+ * We show the output as a tooltip "term explanation", so the generation prompt must be
+ * term-focused (not a full-sentence rewrite).
+ *
+ * Keep the original training prefix, but add an explicit instruction to explain the term
+ * using the sentence as context.
+ */
 const SIMPLIFY_PREFIX = 'Simplify this medical text for a patient: ';
 
-const SIMPLIFY_MAX_NEW_TOKENS = 256;
+const SIMPLIFY_MAX_NEW_TOKENS = 96;
 
 export class MedicalPipeline {
   constructor() {
@@ -201,9 +207,14 @@ export class MedicalPipeline {
       const output = await t5(prompt, {
         max_new_tokens: SIMPLIFY_MAX_NEW_TOKENS,
         do_sample: false,
+        num_beams: 4,
+        early_stopping: true,
+        repetition_penalty: 1.15,
+        no_repeat_ngram_size: 3,
       });
 
-      const simplified = output[0]?.generated_text?.trim();
+      const simplifiedRaw = output[0]?.generated_text?.trim();
+      const simplified = simplifiedRaw ? takeFirstSentence(simplifiedRaw) : simplifiedRaw;
       let result = null;
       if (
         simplified &&
@@ -274,7 +285,11 @@ function buildSimplificationPrompt(fullText, entity) {
   } else if (termAlpha.length >= 3 && !sentAlpha.includes(termAlpha)) {
     sentence = `${sentence} (mentions ${term})`;
   }
-  return SIMPLIFY_PREFIX + sentence;
+  // Ask for a short, term-focused explanation; this matches how we display it in tooltips.
+  return (
+    SIMPLIFY_PREFIX +
+    `Explain the medical term "${term}" in simple words for a patient, based on this context: ${sentence}`
+  );
 }
 
 /** Drop repetitive template completions the model sometimes emits off-distribution. */
@@ -285,7 +300,14 @@ function isLowQualitySimplification(text) {
   if (t.startsWith('this is a medical procedure that involves a person\'s blood pressure') && text.length < 160) {
     return true;
   }
+  if (/^explain the medical term/i.test(text.trim())) return true;
   return false;
+}
+
+function takeFirstSentence(text) {
+  const idx = text.indexOf('.');
+  if (idx === -1) return text.trim();
+  return text.slice(0, idx + 1).trim();
 }
 
 function extractSentence(text, start, end) {
