@@ -36,6 +36,8 @@ export class MedicalPipeline {
     this.t5Failed = false;
     /** Keyed by full simplification prompt (context + term), not bare term. */
     this.sentenceCache = new Map();
+    /** Keyed by normalized term — best result seen across all DOM blocks. */
+    this.termResultCache = new Map();
   }
 
   setThreshold(val) {
@@ -202,6 +204,13 @@ export class MedicalPipeline {
       if (!t5) return null;
 
       const term = entity.word.trim();
+      const termKey = term.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      // Return the best result already seen for this term across all DOM blocks.
+      if (this.termResultCache.has(termKey)) {
+        return this.termResultCache.get(termKey);
+      }
+
       const prompt = buildSimplificationPrompt(fullText, entity);
 
       if (this.sentenceCache.has(prompt)) {
@@ -230,8 +239,8 @@ export class MedicalPipeline {
       }
 
       this.sentenceCache.set(prompt, result);
-
       if (result) {
+        this.termResultCache.set(termKey, result);
         console.log(`[CognitiveBridge] T5: "${entity.word}" -> "${result.slice(0, 80)}${result.length > 80 ? '…' : ''}"`);
       }
       return result;
@@ -330,16 +339,19 @@ function escapeRegExp(str) {
 }
 
 function extractSentence(text, start, end) {
-  // Take a generous window around the entity, then normalize whitespace.
-  // Normalizing first eliminates section headers and indentation bleeding
-  // into the extracted sentence (e.g. "Chief Complaint\n  Patient has X"
-  // would otherwise pull the header into the model context).
-  const raw = text.slice(Math.max(0, start - 200), Math.min(text.length, end + 250));
+  // Normalize a window around the entity first — this collapses section headers
+  // and indentation (e.g. "Chief Complaint\n  Patient has X") into flat text
+  // so boundary search doesn't pull in headers.
+  const BEFORE = 200;
+  const wStart = Math.max(0, start - BEFORE);
+  const raw = text.slice(wStart, Math.min(text.length, end + 250));
   const normalized = raw.replace(/\s+/g, ' ').trim();
 
-  // The entity sits roughly 200 chars from the window start (or at the start
-  // if near the beginning of text). Use that as a search anchor.
-  const anchor = Math.min(200, Math.floor(normalized.length / 2));
+  // Compute where the entity starts in the normalized string.
+  // Normalization compresses whitespace so we can't map exactly, but the
+  // entity's content is still present — search for it as an anchor.
+  const termInNorm = normalized.indexOf(text.slice(start, end).replace(/\s+/g, ' ').trim());
+  const anchor = termInNorm !== -1 ? termInNorm : Math.min(BEFORE, normalized.length - 1);
 
   // Sentence start: scan back for ". " or beginning.
   const boundaryBefore = normalized.lastIndexOf('. ', anchor);
@@ -350,7 +362,6 @@ function extractSentence(text, start, end) {
   const sentEnd = boundaryAfter === -1 ? normalized.length : boundaryAfter + 1;
 
   const sentence = normalized.slice(sentStart, sentEnd).trim();
-  // Fallback to full normalized window if sentence is suspiciously short.
   return (sentence.length >= 20 ? sentence : normalized).slice(0, 300);
 }
 
