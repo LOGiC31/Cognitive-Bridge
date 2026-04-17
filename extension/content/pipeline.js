@@ -219,8 +219,6 @@ export class MedicalPipeline {
       }
 
       const prompt = buildSimplificationPrompt(fullText, entity);
-      const extractedSentence = prompt.slice(SIMPLIFY_PREFIX.length);
-      console.log(`[CognitiveBridge] EXTRACTED "${term}": "${extractedSentence.slice(0, 120)}"`);
 
       if (this.sentenceCache.has(prompt)) {
         console.log(`[CognitiveBridge] PROMPT CACHE HIT "${term}"`);
@@ -305,17 +303,11 @@ export class MedicalPipeline {
   }
 }
 
-function buildSimplificationPrompt(fullText, entity) {
-  const term = entity.word.trim();
-  let sentence = extractSentence(fullText, term, entity.start, entity.end).trim();
-  const termAlpha = term.toLowerCase().replace(/[^a-z0-9]+/g, '');
-  const sentAlpha = sentence.toLowerCase().replace(/[^a-z0-9]+/g, '');
-  if (!sentence || sentence.length < 8) {
-    sentence = `The patient has ${term}.`;
-  } else if (termAlpha.length >= 3 && !sentAlpha.includes(termAlpha)) {
-    sentence = `${sentence} (mentions ${term})`;
-  }
-  return SIMPLIFY_PREFIX + sentence;
+function buildSimplificationPrompt(_fullText, entity) {
+  // Pass only the term — T5 uses its pre-trained medical knowledge to produce
+  // a plain-language definition rather than paraphrasing the surrounding context.
+  const term = entity.word.trim().replace(/[,\.;:!?]+$/, '');
+  return SIMPLIFY_PREFIX + term;
 }
 
 /**
