@@ -206,12 +206,16 @@ export class MedicalPipeline {
       const term = entity.word.trim();
       const termKey = term.toLowerCase().replace(/[^a-z0-9]/g, '');
 
-      // Return the best result already seen for this term across all DOM blocks.
-      if (this.termResultCache.has(termKey)) {
-        return this.termResultCache.get(termKey);
+      // Return a previously cached good result for this term.
+      // If the cached result is bad (e.g. from demo/instructions page), fall through
+      // and let this block attempt a better simplification.
+      const cached = this.termResultCache.get(termKey);
+      if (cached !== undefined && isGoodSimplification(cached)) {
+        return cached;
       }
 
       const prompt = buildSimplificationPrompt(fullText, entity);
+      console.log(`[CognitiveBridge] T5 input for "${term}": "${prompt.slice(SIMPLIFY_PREFIX.length, SIMPLIFY_PREFIX.length + 120)}…"`);
 
       if (this.sentenceCache.has(prompt)) {
         return this.sentenceCache.get(prompt);
@@ -240,7 +244,12 @@ export class MedicalPipeline {
 
       this.sentenceCache.set(prompt, result);
       if (result) {
-        this.termResultCache.set(termKey, result);
+        // Only cache in termResultCache if it's a proper medical simplification.
+        // Bad results (demo page, section header echoes) must not block later
+        // blocks from producing a better result for the same term.
+        if (isGoodSimplification(result)) {
+          this.termResultCache.set(termKey, result);
+        }
         console.log(`[CognitiveBridge] T5: "${entity.word}" -> "${result.slice(0, 80)}${result.length > 80 ? '…' : ''}"`);
       }
       return result;
@@ -301,6 +310,23 @@ function buildSimplificationPrompt(fullText, entity) {
   return SIMPLIFY_PREFIX + sentence;
 }
 
+/**
+ * True if the result looks like a proper medical simplification.
+ * Used to gate termResultCache — bad results (from demo/instructions pages or
+ * section-header echoes) must not block later blocks from producing a better result.
+ */
+function isGoodSimplification(text) {
+  if (!text || text.length < 10) return false;
+  const t = text.toLowerCase();
+  // Dev/UI context leaked into output (demo page artifact)
+  if (/npm run build|build the extension|open chrome|webpack/i.test(t)) return false;
+  // Section header echoed at the start
+  if (/^(radiology report|findings|current medications?|laboratory results?|office visit|visit [—–]|assessment|plan\s*[\d:])/i.test(text.trim())) return false;
+  // Date-only contamination (e.g. "March 15, 2026 Chief Complaint...")
+  if (/^[a-z]+ \d{1,2}, \d{4}/i.test(text.trim())) return false;
+  return true;
+}
+
 /** Drop repetitive template completions the model sometimes emits off-distribution. */
 function isLowQualitySimplification(text) {
   const t = text.toLowerCase();
@@ -342,7 +368,10 @@ function extractSentence(text, start, end) {
   // Normalize a window around the entity first — this collapses section headers
   // and indentation (e.g. "Chief Complaint\n  Patient has X") into flat text
   // so boundary search doesn't pull in headers.
-  const BEFORE = 200;
+  // 30 chars before: enough to catch the start of the current clause but
+  // small enough that we can't reach section headers like "Chief Complaint" or
+  // "Radiology Report" which typically precede clinical content by > 30 chars.
+  const BEFORE = 30;
   const wStart = Math.max(0, start - BEFORE);
   const raw = text.slice(wStart, Math.min(text.length, end + 250));
   const normalized = raw.replace(/\s+/g, ' ').trim();
