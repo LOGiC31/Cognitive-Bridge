@@ -289,12 +289,7 @@ function buildSimplificationPrompt(fullText, entity) {
   } else if (termAlpha.length >= 3 && !sentAlpha.includes(termAlpha)) {
     sentence = `${sentence} (mentions ${term})`;
   }
-  // Keep the training prefix + sentence, then ask a short, term-focused question.
-  // This reduces the chance the model just echoes our instruction as the output.
-  return (
-    SIMPLIFY_PREFIX +
-    `${sentence}\n\nIn one short sentence, what does "${term}" mean for a patient?`
-  );
+  return SIMPLIFY_PREFIX + sentence;
 }
 
 /** Drop repetitive template completions the model sometimes emits off-distribution. */
@@ -335,11 +330,15 @@ function escapeRegExp(str) {
 }
 
 function extractSentence(text, start, end) {
-  const before = text.lastIndexOf('.', start);
-  const after = text.indexOf('.', end);
-  const sentStart = before === -1 ? 0 : before + 1;
-  const sentEnd = after === -1 ? text.length : after + 1;
-  return text.slice(sentStart, sentEnd).trim();
+  // Split on period or newline — medical notes use both as boundaries.
+  const boundaryRe = /[.\n]/;
+  let sentStart = start;
+  while (sentStart > 0 && !boundaryRe.test(text[sentStart - 1])) sentStart--;
+  let sentEnd = end;
+  while (sentEnd < text.length && !boundaryRe.test(text[sentEnd])) sentEnd++;
+  if (sentEnd < text.length) sentEnd++;
+  // Cap at 300 chars so the encoder doesn't get overwhelmed.
+  return text.slice(sentStart, sentEnd).trim().slice(0, 300);
 }
 
 function cleanToken(word, isContinuation = false) {
