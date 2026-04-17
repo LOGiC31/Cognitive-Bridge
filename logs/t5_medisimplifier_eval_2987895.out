@@ -1,0 +1,52 @@
+=== Job Info ===
+Job ID:    2987895
+Node:      fc101
+GPU:       Tesla T4, 16384 MiB
+Python:    Python 3.12.3
+Venv:      /scratch/user/vinaysingh/cb-venv/bin/python3
+CUDA:      available=True, device=Tesla T4
+HF_HOME:   /scratch/user/vinaysingh/.cache/huggingface
+OFFLINE:   HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_EVALUATE_OFFLINE=1 HF_HUB_OFFLINE=1
+================
+
+Eval settings:
+  SPLIT=test
+  MAX_SAMPLES=50
+  MAX_NEW_TOKENS=256
+  NUM_BEAMS=4
+  QUAL_SAMPLES=15
+  QUAL_OUT=logs/t5_medisimplifier_qual_2987895.jsonl
+
+Dataset: /scratch/user/vinaysingh/Cognitive-Bridge/training/data/simplification_pairs_medisimplifier
+Split:   test
+Rows:    50 / 1000
+Torch:   /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/output_medisimplifier/best_model
+ONNX:    /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier
+
+=== PyTorch ===
+device: cuda
+=== ROUGE: PyTorch vs reference ===
+{
+  "rouge1": 0.6032868259951395,
+  "rouge2": 0.40004586749613036,
+  "rougeL": 0.4872757814666875,
+  "rougeLsum": 0.5377543514042122
+}
+rouge1 (mid fmeasure %): 60.3287
+rouge2 (mid fmeasure %): 40.0046
+rougeL (mid fmeasure %): 48.7276
+rougeLsum (mid fmeasure %): 53.7754
+
+avg_pred_chars: 1090.5
+avg_ref_chars:  1953.6
+
+Note: resolved Optimum ONNX load paths for library inference + file discovery:
+  requested --onnx_dir: /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier
+  optimum model_id:     /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier
+  optimum subfolder:    'onnx'
+  effective onnx dir:   /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier/onnx
+
+ONNX: no static encoder length inferred; tokenizer uses truncation=True without max_length.
+  If ORT fails on cross-attention / past_key_values shapes, pass --onnx_max_input_length N.
+
+ONNX generation recovered from encoder length mismatch; retrying with max_length=64

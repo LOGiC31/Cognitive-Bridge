@@ -16,7 +16,6 @@ training/simplification/onnx_quantized_medisimplifier/
 training/data/bc5cdr_processed/
 training/data/simplification_pairs/
 training/data/simplification_pairs_medisimplifier/
-logs/
 .nltk_data/
 dataset-candidates.txt
 .env
