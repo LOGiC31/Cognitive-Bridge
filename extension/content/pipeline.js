@@ -307,7 +307,7 @@ export class MedicalPipeline {
 
 function buildSimplificationPrompt(fullText, entity) {
   const term = entity.word.trim();
-  let sentence = extractSentence(fullText, entity.start, entity.end).trim();
+  let sentence = extractSentence(fullText, term, entity.start, entity.end).trim();
   const termAlpha = term.toLowerCase().replace(/[^a-z0-9]+/g, '');
   const sentAlpha = sentence.toLowerCase().replace(/[^a-z0-9]+/g, '');
   if (!sentence || sentence.length < 8) {
@@ -332,6 +332,10 @@ function isGoodSimplification(text) {
   if (/^(radiology report|findings|current medications?|laboratory results?|office visit|visit [—–]|assessment|plan\s*[\d:])/i.test(text.trim())) return false;
   // Date-only contamination (e.g. "March 15, 2026 Chief Complaint...")
   if (/^[a-z]+ \d{1,2}, \d{4}/i.test(text.trim())) return false;
+  // Visit/admission date summaries with no term-specific content
+  if (/^the patient (came to|was admitted to|should see|went to|visited).{0,50}(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},\s+\d{4}/i.test(text.trim())) return false;
+  // Chief Complaint echoed as output
+  if (/^chief complaint/i.test(text.trim())) return false;
   return true;
 }
 
@@ -372,34 +376,37 @@ function escapeRegExp(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function extractSentence(text, start, end) {
-  // Normalize a window around the entity first — this collapses section headers
-  // and indentation (e.g. "Chief Complaint\n  Patient has X") into flat text
-  // so boundary search doesn't pull in headers.
-  // 30 chars before: enough to catch the start of the current clause but
-  // small enough that we can't reach section headers like "Chief Complaint" or
-  // "Radiology Report" which typically precede clinical content by > 30 chars.
-  const BEFORE = 30;
-  const wStart = Math.max(0, start - BEFORE);
-  const raw = text.slice(wStart, Math.min(text.length, end + 250));
-  const normalized = raw.replace(/\s+/g, ' ').trim();
+function extractSentence(text, termWord, _start, _end) {
+  // NER character offsets are in tokenizer-normalized (whitespace-collapsed) space,
+  // not raw-text space. Large DOM blocks have headers at position 0 so all entity
+  // offsets map near 0, producing the same header-contaminated window for every term.
+  // Searching for the term directly in raw text gives the correct position.
+  const term = termWord.replace(/\s+/g, ' ').trim();
+  const cleanTerm = term.replace(/[,\.;:!?]+$/, '');
 
-  // Compute where the entity starts in the normalized string.
-  // Normalization compresses whitespace so we can't map exactly, but the
-  // entity's content is still present — search for it as an anchor.
-  const termInNorm = normalized.indexOf(text.slice(start, end).replace(/\s+/g, ' ').trim());
-  const anchor = termInNorm !== -1 ? termInNorm : Math.min(BEFORE, normalized.length - 1);
+  let termPos = text.indexOf(term);
+  if (termPos === -1) termPos = text.indexOf(cleanTerm);
+  if (termPos === -1) termPos = Math.max(0, _start);
 
-  // Sentence start: scan back for ". " or beginning.
-  const boundaryBefore = normalized.lastIndexOf('. ', anchor);
-  const sentStart = boundaryBefore === -1 ? 0 : boundaryBefore + 2;
+  // Scan back in raw text for nearest sentence/paragraph boundary.
+  // Newlines are stronger section boundaries than ". " in clinical notes.
+  const before = text.slice(0, termPos);
+  const nlIdx = before.lastIndexOf('\n');
+  const dotIdx = before.lastIndexOf('. ');
+  const boundaryIdx = Math.max(nlIdx, dotIdx);
+  const sentStartRaw = boundaryIdx === -1 ? Math.max(0, termPos - 200) : boundaryIdx + 1;
 
-  // Sentence end: scan forward for "." or end of string.
-  const boundaryAfter = normalized.indexOf('.', anchor);
-  const sentEnd = boundaryAfter === -1 ? normalized.length : boundaryAfter + 1;
+  // Scan forward for nearest sentence end.
+  const afterEnd = termPos + Math.max(term.length, cleanTerm.length);
+  const dotFwdIdx = text.indexOf('.', afterEnd);
+  const nlFwdIdx = text.indexOf('\n', afterEnd);
+  const fwdBoundary =
+    dotFwdIdx !== -1 && nlFwdIdx !== -1 ? Math.min(dotFwdIdx, nlFwdIdx) :
+    dotFwdIdx !== -1 ? dotFwdIdx : nlFwdIdx;
+  const sentEndRaw = fwdBoundary === -1 ? Math.min(text.length, termPos + 300) : fwdBoundary + 1;
 
-  const sentence = normalized.slice(sentStart, sentEnd).trim();
-  return (sentence.length >= 20 ? sentence : normalized).slice(0, 300);
+  const sentence = text.slice(sentStartRaw, sentEndRaw).replace(/\s+/g, ' ').trim();
+  return sentence.slice(0, 300);
 }
 
 function cleanToken(word, isContinuation = false) {
