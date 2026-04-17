@@ -330,15 +330,28 @@ function escapeRegExp(str) {
 }
 
 function extractSentence(text, start, end) {
-  // Split on period or newline — medical notes use both as boundaries.
-  const boundaryRe = /[.\n]/;
-  let sentStart = start;
-  while (sentStart > 0 && !boundaryRe.test(text[sentStart - 1])) sentStart--;
-  let sentEnd = end;
-  while (sentEnd < text.length && !boundaryRe.test(text[sentEnd])) sentEnd++;
-  if (sentEnd < text.length) sentEnd++;
-  // Cap at 300 chars so the encoder doesn't get overwhelmed.
-  return text.slice(sentStart, sentEnd).trim().slice(0, 300);
+  // Take a generous window around the entity, then normalize whitespace.
+  // Normalizing first eliminates section headers and indentation bleeding
+  // into the extracted sentence (e.g. "Chief Complaint\n  Patient has X"
+  // would otherwise pull the header into the model context).
+  const raw = text.slice(Math.max(0, start - 200), Math.min(text.length, end + 250));
+  const normalized = raw.replace(/\s+/g, ' ').trim();
+
+  // The entity sits roughly 200 chars from the window start (or at the start
+  // if near the beginning of text). Use that as a search anchor.
+  const anchor = Math.min(200, Math.floor(normalized.length / 2));
+
+  // Sentence start: scan back for ". " or beginning.
+  const boundaryBefore = normalized.lastIndexOf('. ', anchor);
+  const sentStart = boundaryBefore === -1 ? 0 : boundaryBefore + 2;
+
+  // Sentence end: scan forward for "." or end of string.
+  const boundaryAfter = normalized.indexOf('.', anchor);
+  const sentEnd = boundaryAfter === -1 ? normalized.length : boundaryAfter + 1;
+
+  const sentence = normalized.slice(sentStart, sentEnd).trim();
+  // Fallback to full normalized window if sentence is suspiciously short.
+  return (sentence.length >= 20 ? sentence : normalized).slice(0, 300);
 }
 
 function cleanToken(word, isContinuation = false) {
