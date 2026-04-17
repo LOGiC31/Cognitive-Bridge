@@ -211,13 +211,19 @@ export class MedicalPipeline {
       // and let this block attempt a better simplification.
       const cached = this.termResultCache.get(termKey);
       if (cached !== undefined && isGoodSimplification(cached)) {
+        console.log(`[CognitiveBridge] CACHE HIT "${term}" -> "${cached.slice(0, 60)}…"`);
         return cached;
+      }
+      if (cached !== undefined) {
+        console.log(`[CognitiveBridge] CACHE BAD "${term}" -> retrying with new context`);
       }
 
       const prompt = buildSimplificationPrompt(fullText, entity);
-      console.log(`[CognitiveBridge] T5 input for "${term}": "${prompt.slice(SIMPLIFY_PREFIX.length, SIMPLIFY_PREFIX.length + 120)}…"`);
+      const extractedSentence = prompt.slice(SIMPLIFY_PREFIX.length);
+      console.log(`[CognitiveBridge] EXTRACTED "${term}": "${extractedSentence.slice(0, 120)}"`);
 
       if (this.sentenceCache.has(prompt)) {
+        console.log(`[CognitiveBridge] PROMPT CACHE HIT "${term}"`);
         return this.sentenceCache.get(prompt);
       }
 
@@ -231,6 +237,8 @@ export class MedicalPipeline {
       });
 
       const simplifiedRaw = output[0]?.generated_text?.trim();
+      console.log(`[CognitiveBridge] RAW OUTPUT "${term}": "${(simplifiedRaw || '').slice(0, 120)}"`);
+
       const simplified = simplifiedRaw ? cleanModelOutput(term, simplifiedRaw) : simplifiedRaw;
       let result = null;
       if (
@@ -244,13 +252,13 @@ export class MedicalPipeline {
 
       this.sentenceCache.set(prompt, result);
       if (result) {
-        // Only cache in termResultCache if it's a proper medical simplification.
-        // Bad results (demo page, section header echoes) must not block later
-        // blocks from producing a better result for the same term.
-        if (isGoodSimplification(result)) {
+        const good = isGoodSimplification(result);
+        console.log(`[CognitiveBridge] T5 ${good ? '✓' : '✗'} "${entity.word}" -> "${result.slice(0, 80)}${result.length > 80 ? '…' : ''}"`);
+        if (good) {
           this.termResultCache.set(termKey, result);
         }
-        console.log(`[CognitiveBridge] T5: "${entity.word}" -> "${result.slice(0, 80)}${result.length > 80 ? '…' : ''}"`);
+      } else {
+        console.log(`[CognitiveBridge] FILTERED OUT "${term}" (raw: "${(simplifiedRaw || '').slice(0, 60)}")`);
       }
       return result;
     } catch (err) {
