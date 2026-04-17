@@ -33,6 +33,7 @@ export class MedicalPipeline {
     this.confidenceThreshold = 0.75;
     this.nerLoading = false;
     this.t5Loading = false;
+    this.t5Failed = false;
     /** Keyed by full simplification prompt (context + term), not bare term. */
     this.sentenceCache = new Map();
   }
@@ -70,6 +71,7 @@ export class MedicalPipeline {
 
   async loadT5() {
     if (this.t5Pipeline) return this.t5Pipeline;
+    if (this.t5Failed) return null;
     if (this.t5Loading) {
       while (this.t5Loading) await sleep(100);
       return this.t5Pipeline;
@@ -88,8 +90,9 @@ export class MedicalPipeline {
       return this.t5Pipeline;
     } catch (err) {
       console.error(`[CognitiveBridge] T5 model failed to load:`, err);
+      this.t5Failed = true;
       this.reportModelStatus('t5', 'error');
-      throw err;
+      return null;
     } finally {
       this.t5Loading = false;
     }
@@ -196,6 +199,7 @@ export class MedicalPipeline {
   async simplifyEntity(fullText, entity) {
     try {
       const t5 = await this.loadT5();
+      if (!t5) return null;
 
       const term = entity.word.trim();
       const prompt = buildSimplificationPrompt(fullText, entity);
