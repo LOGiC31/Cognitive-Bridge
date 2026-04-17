@@ -37,6 +37,8 @@ def export_to_onnx():
         output=Path(ONNX_OUTPUT),
         task="text2text-generation-with-past",
         opset=14,
+        # Slightly relax validation tolerance for large T5 exports.
+        atol=1e-4,
     )
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)

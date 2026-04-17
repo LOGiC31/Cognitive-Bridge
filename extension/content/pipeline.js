@@ -12,7 +12,7 @@ try {
 }
 
 const NER_MODEL = 'LOGiC31/cognitive-bridge-ner';
-const T5_MODEL = 'LOGiC31/cognitive-bridge-t5';
+const T5_MODEL = 'LOGiC31/cognitive-bridge-t5-medisimplifier';
 
 /**
  * We show the output as a tooltip "term explanation", so the generation prompt must be
@@ -23,7 +23,7 @@ const T5_MODEL = 'LOGiC31/cognitive-bridge-t5';
  */
 const SIMPLIFY_PREFIX = 'Simplify this medical text for a patient: ';
 
-const SIMPLIFY_MAX_NEW_TOKENS = 96;
+const SIMPLIFY_MAX_NEW_TOKENS = 72;
 
 export class MedicalPipeline {
   constructor() {
@@ -214,7 +214,7 @@ export class MedicalPipeline {
       });
 
       const simplifiedRaw = output[0]?.generated_text?.trim();
-      const simplified = simplifiedRaw ? takeFirstSentence(simplifiedRaw) : simplifiedRaw;
+      const simplified = simplifiedRaw ? cleanModelOutput(term, simplifiedRaw) : simplifiedRaw;
       let result = null;
       if (
         simplified &&
@@ -285,10 +285,11 @@ function buildSimplificationPrompt(fullText, entity) {
   } else if (termAlpha.length >= 3 && !sentAlpha.includes(termAlpha)) {
     sentence = `${sentence} (mentions ${term})`;
   }
-  // Ask for a short, term-focused explanation; this matches how we display it in tooltips.
+  // Keep the training prefix + sentence, then ask a short, term-focused question.
+  // This reduces the chance the model just echoes our instruction as the output.
   return (
     SIMPLIFY_PREFIX +
-    `Explain the medical term "${term}" in simple words for a patient, based on this context: ${sentence}`
+    `${sentence}\n\nIn one short sentence, what does "${term}" mean for a patient?`
   );
 }
 
@@ -297,6 +298,9 @@ function isLowQualitySimplification(text) {
   const t = text.toLowerCase();
   if ((t.match(/this is a medical text for a patient/g) || []).length >= 2) return true;
   if (/^this is a medical text for a patient\.?\s*$/i.test(text.trim())) return true;
+  if (t.includes('update of a previous version')) return true;
+  if (t.includes('original version of this review')) return true;
+  if (t.includes('medical literature')) return true;
   if (t.startsWith('this is a medical procedure that involves a person\'s blood pressure') && text.length < 160) {
     return true;
   }
@@ -304,10 +308,26 @@ function isLowQualitySimplification(text) {
   return false;
 }
 
-function takeFirstSentence(text) {
-  const idx = text.indexOf('.');
-  if (idx === -1) return text.trim();
-  return text.slice(0, idx + 1).trim();
+function cleanModelOutput(term, text) {
+  let t = text.trim();
+
+  // If the model echoed the prompt/question, strip it.
+  t = t.replace(/^simplify this medical text for a patient:\s*/i, '');
+  t = t.replace(/^in one short sentence,\s*what does\s*"?.+?"?\s*mean for a patient\?\s*/i, '');
+
+  // Strip the exact term prefix some generations start with.
+  const termRe = new RegExp(`^("${escapeRegExp(term)}"|${escapeRegExp(term)})\\s*[:-]\\s*`, 'i');
+  t = t.replace(termRe, '');
+
+  // Take first sentence for tooltip brevity.
+  const idx = t.indexOf('.');
+  if (idx !== -1) t = t.slice(0, idx + 1);
+
+  return t.trim();
+}
+
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function extractSentence(text, start, end) {

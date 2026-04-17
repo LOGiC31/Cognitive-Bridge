@@ -9,7 +9,15 @@ training/ner/onnx_quantized/
 training/simplification/output/
 training/simplification/onnx_model/
 training/simplification/onnx_quantized/
+training/simplification/output_medisimplifier/
+training/simplification/onnx_model_medisimplifier/
+training/simplification/onnx_model_v2/
+training/simplification/onnx_quantized_medisimplifier/
 training/data/bc5cdr_processed/
 training/data/simplification_pairs/
+training/data/simplification_pairs_medisimplifier/
+logs/
+.nltk_data/
+dataset-candidates.txt
 .env
 .cursor/*

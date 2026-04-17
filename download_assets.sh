@@ -19,71 +19,61 @@ export HF_HOME=/scratch/user/vinaysingh/.cache/huggingface
 export PIP_CACHE_DIR=/scratch/user/vinaysingh/PIP_CACHE
 mkdir -p "$HF_HOME"
 
-# ─── NER assets ───────────────────────────────────────────────────────────────
+# ─── NER assets (already downloaded) ─────────────────────────────────────────
 
-echo "=== NER Step 1: Prepare BC5CDR dataset ==="
-python3 training/data/prepare_bc5cdr.py
+# echo "=== NER Step 1: Prepare BC5CDR dataset ==="
+# python3 training/data/prepare_bc5cdr.py
 
-echo ""
-echo "=== NER Step 2: Pre-download DistilBioBERT model & tokenizer ==="
-python3 -c "
-from transformers import AutoTokenizer, AutoModelForTokenClassification
-model_name = 'nlpie/distil-biobert'
-print(f'Downloading tokenizer: {model_name}')
-AutoTokenizer.from_pretrained(model_name)
-print(f'Downloading model: {model_name}')
-AutoModelForTokenClassification.from_pretrained(model_name)
-print('Model & tokenizer cached.')
-"
+# echo "=== NER Step 2: Pre-download DistilBioBERT model & tokenizer ==="
+# python3 -c "
+# from transformers import AutoTokenizer, AutoModelForTokenClassification
+# AutoTokenizer.from_pretrained('nlpie/distil-biobert')
+# AutoModelForTokenClassification.from_pretrained('nlpie/distil-biobert')
+# "
 
-echo ""
-echo "=== NER Step 3: Pre-download seqeval metric ==="
+# echo "=== NER Step 3: Pre-download seqeval metric ==="
+# python3 -c "import evaluate; evaluate.load('seqeval')"
+
+# ─── T5 simplification assets (already downloaded) ───────────────────────────
+
+# echo "=== T5 Step 1: Prepare simplification dataset (Cochrane + curated) ==="
+# python3 training/data/prepare_simplification.py
+
+# echo "=== T5 Step 1b: Pre-download medisimplifier dataset ==="
+# python3 -c "
+# from datasets import load_dataset
+# for split in ('train','validation','test'):
+#     load_dataset('GuyDor007/medisimplifier-dataset', split=split)
+# "
+
+# echo "=== T5 Step 2: Pre-download flan-t5-small model & tokenizer ==="
+# python3 -c "
+# from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+# AutoTokenizer.from_pretrained('google/flan-t5-small')
+# AutoModelForSeq2SeqLM.from_pretrained('google/flan-t5-small')
+# "
+
+# echo "=== T5 Step 3a: Pre-download ROUGE metric ==="
+# python3 -c "import evaluate; evaluate.load('rouge')"
+
+# echo "=== T5 Step 4: Pre-download NLTK punkt tokenizer ==="
+# python3 -c "
+# import nltk, os
+# nltk_dir = os.path.join(os.getcwd(), '.nltk_data')
+# os.makedirs(nltk_dir, exist_ok=True)
+# nltk.download('punkt', download_dir=nltk_dir)
+# nltk.download('punkt_tab', download_dir=nltk_dir)
+# "
+
+# ─── New: SARI metric (required for verify_onnx_export.py) ───────────────────
+
+echo "=== Downloading SARI metric ==="
 python3 -c "
 import evaluate
-print('Downloading seqeval metric...')
-evaluate.load('seqeval')
-print('seqeval metric cached.')
-"
-
-# ─── T5 simplification assets ────────────────────────────────────────────────
-
-echo ""
-echo "=== T5 Step 1: Prepare simplification dataset (Cochrane + curated) ==="
-python3 training/data/prepare_simplification.py
-
-echo ""
-echo "=== T5 Step 2: Pre-download T5-small model & tokenizer ==="
-python3 -c "
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-model_name = 'google/flan-t5-small'
-print(f'Downloading tokenizer: {model_name}')
-AutoTokenizer.from_pretrained(model_name)
-print(f'Downloading model: {model_name}')
-AutoModelForSeq2SeqLM.from_pretrained(model_name)
-print('Model & tokenizer cached.')
+print('Downloading sari metric...')
+evaluate.load('sari')
+print('sari metric cached.')
 "
 
 echo ""
-echo "=== T5 Step 3: Pre-download ROUGE metric ==="
-python3 -c "
-import evaluate
-print('Downloading rouge metric...')
-evaluate.load('rouge')
-print('rouge metric cached.')
-"
-
-echo ""
-echo "=== T5 Step 4: Pre-download NLTK punkt tokenizer ==="
-python3 -c "
-import nltk, os
-nltk_dir = os.path.join(os.getcwd(), '.nltk_data')
-os.makedirs(nltk_dir, exist_ok=True)
-nltk.download('punkt', download_dir=nltk_dir, quiet=False)
-nltk.download('punkt_tab', download_dir=nltk_dir, quiet=False)
-print(f'NLTK data saved to {nltk_dir}')
-"
-
-echo ""
-echo "=== All assets downloaded. You can now submit SLURM jobs: ==="
-echo "    sbatch train_ner.slurm"
-echo "    sbatch train_t5.slurm"
+echo "=== Done ==="

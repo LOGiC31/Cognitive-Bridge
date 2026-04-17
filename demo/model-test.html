@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cognitive Bridge — Model Sanity Test</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: rgba(255, 255, 255, 0.06);
+        --panel2: rgba(255, 255, 255, 0.10);
+        --text: #e7eaf2;
+        --muted: rgba(231, 234, 242, 0.75);
+        --accent: #6ee7ff;
+        --bad: #ff7a7a;
+        --ok: #a7f3d0;
+        --border: rgba(255, 255, 255, 0.12);
+        --shadow: 0 14px 50px rgba(0, 0, 0, 0.35);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+          "Segoe UI Emoji";
+        color: var(--text);
+        background:
+          radial-gradient(900px 600px at 15% 20%, rgba(110, 231, 255, 0.18), transparent 55%),
+          radial-gradient(800px 500px at 85% 35%, rgba(167, 243, 208, 0.12), transparent 55%),
+          radial-gradient(900px 600px at 55% 95%, rgba(255, 122, 122, 0.08), transparent 60%),
+          var(--bg);
+      }
+
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 18px 48px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 16px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      .title {
+        background: linear-gradient(135deg, rgba(110, 231, 255, 0.25), rgba(167, 243, 208, 0.18));
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 18px 18px 14px;
+      }
+
+      .title h1 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: -0.3px;
+      }
+
+      .title p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .status {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        color: var(--muted);
+        width: fit-content;
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05);
+      }
+      .dot.ok { background: var(--ok); box-shadow: 0 0 0 4px rgba(167, 243, 208, 0.12); }
+      .dot.bad { background: var(--bad); box-shadow: 0 0 0 4px rgba(255, 122, 122, 0.12); }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .panel .hd {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .panel .hd strong { font-size: 13px; letter-spacing: 0.2px; }
+      .panel .hd span { font-size: 12px; color: var(--muted); }
+
+      .panel .bd { padding: 12px 14px 14px; }
+
+      textarea, input {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.22);
+        color: var(--text);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 14px;
+        padding: 12px 12px;
+        outline: none;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+      }
+
+      textarea { min-height: 160px; resize: vertical; line-height: 1.45; font-size: 13px; }
+      input { font-size: 13px; }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      button {
+        appearance: none;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: linear-gradient(135deg, rgba(110, 231, 255, 0.22), rgba(167, 243, 208, 0.16));
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 14px;
+        font-weight: 650;
+        font-size: 13px;
+        cursor: pointer;
+        transition: transform 0.08s ease, background 0.2s ease, opacity 0.2s ease;
+      }
+      button:hover { transform: translateY(-1px); }
+      button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+      .log {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12px;
+        line-height: 1.45;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: rgba(231, 234, 242, 0.92);
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 14px;
+        padding: 12px;
+        min-height: 160px;
+        max-height: 420px;
+        overflow: auto;
+      }
+
+      .hint { color: var(--muted); font-size: 12px; margin-top: 10px; line-height: 1.5; }
+      .hint code { background: rgba(255,255,255,0.09); padding: 1px 6px; border-radius: 999px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="hero">
+        <div class="title">
+          <h1>Cognitive Bridge — T5 Sanity Test</h1>
+          <p>
+            Runs <code>LOGiC31/cognitive-bridge-t5</code> directly in Chrome (no extension) and prints outputs for the
+            exact prompts we’d use for term tooltips.
+          </p>
+        </div>
+        <div class="status">
+          <div class="pill"><span id="dot" class="dot"></span><span id="statusText">Idle</span></div>
+          <div class="pill"><span>Tip:</span><span>open DevTools → Console for errors</span></div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="hd">
+            <strong>Context sentence</strong>
+            <span>used as grounding</span>
+          </div>
+          <div class="bd">
+            <textarea id="context"></textarea>
+            <div class="row">
+              <div>
+                <div class="hint">Comma-separated terms. Example: <code>dyspnea, edema, fatigue, orthopnea</code></div>
+                <input id="terms" />
+              </div>
+              <div>
+                <div class="hint">Runs one prompt per term.</div>
+                <button id="runBtn">Load model + run</button>
+              </div>
+            </div>
+            <div class="hint">
+              If outputs look like “update of a previous version…”, that indicates the T5 model itself is producing
+              off-distribution boilerplate (not an extension bug).
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="hd">
+            <strong>Outputs</strong>
+            <span>generated_text</span>
+          </div>
+          <div class="bd">
+            <div id="log" class="log"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { pipeline, env } from 'https://esm.sh/@xenova/transformers';
+
+      const T5_MODEL = 'LOGiC31/cognitive-bridge-t5';
+      const SIMPLIFY_PREFIX = 'Simplify this medical text for a patient: ';
+
+      env.allowLocalModels = false;
+      env.useBrowserCache = true;
+      try {
+        const ortEnv = env.backends?.onnx?.env;
+        if (ortEnv) ortEnv.logLevel = 'error';
+      } catch {
+        // ignore
+      }
+
+      const $ = (id) => document.getElementById(id);
+      const dot = $('dot');
+      const statusText = $('statusText');
+      const logEl = $('log');
+      const runBtn = $('runBtn');
+      const contextEl = $('context');
+      const termsEl = $('terms');
+
+      contextEl.value =
+        'Patient presents with persistent dyspnea on exertion and bilateral lower extremity edema for the past 3 weeks. She also reports increasing fatigue and orthopnea requiring 3 pillows at night.';
+      termsEl.value = 'dyspnea, edema, fatigue, orthopnea';
+
+      function setStatus(kind, text) {
+        dot.className = 'dot' + (kind === 'ok' ? ' ok' : kind === 'bad' ? ' bad' : '');
+        statusText.textContent = text;
+      }
+
+      function append(line) {
+        logEl.textContent += line + '\\n';
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      function buildPrompt(sentence, term) {
+        return (
+          SIMPLIFY_PREFIX +
+          `${sentence}\\n\\nIn one short sentence, what does "${term}" mean for a patient?`
+        );
+      }
+
+      let t5 = null;
+
+      runBtn.addEventListener('click', async () => {
+        logEl.textContent = '';
+        const sentence = (contextEl.value || '').trim();
+        const terms = (termsEl.value || '')
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean);
+
+        if (!sentence || terms.length === 0) {
+          setStatus('bad', 'Missing context or terms');
+          return;
+        }
+
+        runBtn.disabled = true;
+        try {
+          setStatus('', 'Loading T5…');
+          if (!t5) {
+            t5 = await pipeline('text2text-generation', T5_MODEL, { quantized: true });
+          }
+          setStatus('', 'Running…');
+
+          for (const term of terms) {
+            const prompt = buildPrompt(sentence, term);
+            append(`TERM: ${term}`);
+            append(`PROMPT: ${prompt}`);
+            const out = await t5(prompt, {
+              max_new_tokens: 72,
+              do_sample: false,
+              num_beams: 4,
+              early_stopping: true,
+              repetition_penalty: 1.15,
+              no_repeat_ngram_size: 3,
+            });
+            append(`OUTPUT: ${(out?.[0]?.generated_text || '').trim()}`);
+            append('---');
+          }
+
+          setStatus('ok', 'Done');
+        } catch (e) {
+          console.error(e);
+          setStatus('bad', 'Error (see console)');
+          append(String(e?.stack || e));
+        } finally {
+          runBtn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
+
