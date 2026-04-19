@@ -1,0 +1,98 @@
+=== Job Info ===
+Job ID: 2975926
+Node:   fc101
+GPU:    Tesla T4, 16384 MiB
+Python: Python 3.12.3
+PyTorch CUDA: available=True, device=Tesla T4
+================
+Step 1: Preparing simplification dataset...
+Dataset already exists at /scratch/user/vinaysingh/Cognitive-Bridge/training/data/simplification_pairs, skipping preparation.
+Delete the directory to re-prepare: rm -rf /scratch/user/vinaysingh/Cognitive-Bridge/training/data/simplification_pairs
+Step 2: Fine-tuning T5-small for simplification...
+Loading dataset from /scratch/user/vinaysingh/Cognitive-Bridge/training/data/simplification_pairs...
+  train: 3593 examples
+  validation: 411 examples
+  test: 480 examples
+
+Loading tokenizer: google/flan-t5-small
+Tokenizing dataset...
+Loading model: google/flan-t5-small
+
+Starting training (early stopping patience=3)...
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 2.7222222222222224e-06, 'epoch': 0.11}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 5.500000000000001e-06, 'epoch': 0.22}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 8.27777777777778e-06, 'epoch': 0.33}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 1.1055555555555556e-05, 'epoch': 0.44}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 1.3833333333333334e-05, 'epoch': 0.56}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 1.661111111111111e-05, 'epoch': 0.67}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 1.938888888888889e-05, 'epoch': 0.78}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 2.216666666666667e-05, 'epoch': 0.89}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 2.4944444444444447e-05, 'epoch': 1.0}
+{'eval_loss': nan, 'eval_rouge1': 13.2742, 'eval_rouge2': 4.5067, 'eval_rougeL': 9.9641, 'eval_rougeLsum': 11.8925, 'eval_runtime': 54.2425, 'eval_samples_per_second': 7.577, 'eval_steps_per_second': 0.479, 'epoch': 1.0}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 2.772222222222222e-05, 'epoch': 1.11}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 3.05e-05, 'epoch': 1.22}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 3.327777777777778e-05, 'epoch': 1.33}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 3.605555555555556e-05, 'epoch': 1.44}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 3.883333333333333e-05, 'epoch': 1.56}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.1611111111111114e-05, 'epoch': 1.67}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.438888888888889e-05, 'epoch': 1.78}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.716666666666667e-05, 'epoch': 1.89}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.994444444444445e-05, 'epoch': 2.0}
+{'eval_loss': nan, 'eval_rouge1': 13.2742, 'eval_rouge2': 4.5067, 'eval_rougeL': 9.9641, 'eval_rougeLsum': 11.8925, 'eval_runtime': 48.777, 'eval_samples_per_second': 8.426, 'eval_steps_per_second': 0.533, 'epoch': 2.0}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.969753086419753e-05, 'epoch': 2.11}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.938888888888889e-05, 'epoch': 2.22}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.9080246913580244e-05, 'epoch': 2.33}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.8771604938271606e-05, 'epoch': 2.44}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.846296296296297e-05, 'epoch': 2.56}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.8154320987654324e-05, 'epoch': 2.67}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.784567901234568e-05, 'epoch': 2.78}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.753703703703704e-05, 'epoch': 2.89}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.7228395061728396e-05, 'epoch': 3.0}
+{'eval_loss': nan, 'eval_rouge1': 13.2742, 'eval_rouge2': 4.5067, 'eval_rougeL': 9.9641, 'eval_rougeLsum': 11.8925, 'eval_runtime': 55.841, 'eval_samples_per_second': 7.36, 'eval_steps_per_second': 0.466, 'epoch': 3.0}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.691975308641975e-05, 'epoch': 3.11}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.6611111111111114e-05, 'epoch': 3.22}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.6302469135802476e-05, 'epoch': 3.33}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.599382716049383e-05, 'epoch': 3.44}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.568518518518519e-05, 'epoch': 3.56}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.537654320987654e-05, 'epoch': 3.67}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.5067901234567904e-05, 'epoch': 3.78}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.475925925925926e-05, 'epoch': 3.89}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 4.445061728395062e-05, 'epoch': 4.0}
+{'eval_loss': nan, 'eval_rouge1': 13.2742, 'eval_rouge2': 4.5067, 'eval_rougeL': 9.9641, 'eval_rougeLsum': 11.8925, 'eval_runtime': 49.6756, 'eval_samples_per_second': 8.274, 'eval_steps_per_second': 0.523, 'epoch': 4.0}
+{'train_runtime': 730.2374, 'train_samples_per_second': 98.406, 'train_steps_per_second': 12.325, 'train_loss': 0.0, 'epoch': 4.0}
+
+Evaluating on test set...
+Test Results: {'eval_loss': nan, 'eval_rouge1': 12.7029, 'eval_rouge2': 4.263, 'eval_rougeL': 9.3514, 'eval_rougeLsum': 11.3744, 'eval_runtime': 61.1273, 'eval_samples_per_second': 7.852, 'eval_steps_per_second': 0.491, 'epoch': 4.0}
+
+Best model saved to /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/output/best_model
+
+Sample predictions:
+  Input:  Simplify this medical text for a patient: The patient presents with acute myocardial infarction with ST-segment elevation.
+  Output: The patient presents with acute myocardial infarction with ST-segment elevation.
+
+  Input:  Simplify this medical text for a patient: Labs reveal elevated creatinine at 2.8 mg/dL suggestive of acute kidney injury.
+  Output: Plasma creatinine levels are elevated at 2.8 mg/dL.
+
+Step 3: Exporting to ONNX...
+Exporting T5 model from /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/output/best_model to ONNX...
+ONNX model exported to /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_model
+Generated 2 ONNX files:
+  decoder_model.onnx: 221.8 MB
+  encoder_model.onnx: 134.9 MB
+
+Applying 8-bit dynamic quantization...
+  Quantizing decoder_model.onnx -> decoder_model_quantized.onnx
+  Quantizing encoder_model.onnx -> encoder_model_quantized.onnx
+
+Original total size:  356.7 MB
+Quantized total size: 163.8 MB
+Compression ratio:    2.2x
+Quantized model saved to /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized
+  Copied decoder_model_quantized.onnx -> onnx/decoder_model_quantized.onnx
+  Copied encoder_model_quantized.onnx -> onnx/encoder_model_quantized.onnx
+
+Model ready for Transformers.js at /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized
+Files in onnx/ subdirectory:
+  decoder_model_quantized.onnx: 55.9 MB
+  encoder_model_quantized.onnx: 34.0 MB
+=== Done ===

@@ -1,0 +1,36 @@
+=== Job Info ===
+Job ID:  2990064
+Node:    fc103
+GPU:     Tesla T4, 16384 MiB
+Python:  Python 3.12.3
+================
+
+============================================================
+Cognitive Bridge — ONNX Export Verification
+============================================================
+Split:       test  (200 samples)
+PyTorch:     /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/output_medisimplifier/best_model
+ONNX:        /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier
+max_new_tokens=256  num_beams=1
+
+PyTorch device: cuda
+
+ONNX provider: CPUExecutionProvider
+  Patching ORT decoder.embed_size_per_head: 85 -> 64 (T5 d_kv)
+
+  [SKIP] Flesch-Kincaid: `textstat` not installed. Run: pip install textstat
+
+  [INFO] PyTorch/ONNX exact match: 9/200 (4.5%)
+  [INFO] Avg chars — PyTorch: 381  ONNX: 381  Reference: 415
+
+============================================================
+Results
+============================================================
+  [FAIL] ROUGE-L degradation: PyTorch=0.6154  ONNX=0.5519  drop=10.31%  threshold=<5% drop
+  [PASS] Repetition rate (ONNX): 0.0% of outputs have repeated 5-grams  (threshold <= 10%)
+  [PASS] Empty outputs (ONNX): 0/200 empty  (threshold <= 0%)
+  [FAIL] SARI score: ONNX=62.43  PyTorch=66.98  (threshold: gap <= 3 pts)
+
+2 CHECK(S) FAILED:
+  -> ROUGE-L degradation
+  -> SARI score

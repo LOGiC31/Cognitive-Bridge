@@ -1,0 +1,93 @@
+=== Job Info ===
+Job ID:  2990111
+Node:    fc097
+GPU:     NVIDIA A40, 49140 MiB
+Python:  Python 3.12.3
+================
+
+============================================================
+Cognitive Bridge — ONNX Export Verification
+============================================================
+Split:       test  (200 samples)
+PyTorch:     /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/output_medisimplifier/best_model
+ONNX:        /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier
+max_new_tokens=256  num_beams=1
+
+PyTorch device: cuda
+
+ONNX provider: CPUExecutionProvider
+  Patching ORT decoder.embed_size_per_head: 85 -> 64 (T5 d_kv)
+
+  [SKIP] Flesch-Kincaid: `textstat` not installed. Run: pip install textstat
+
+  [INFO] PyTorch/ONNX exact match: 9/200 (4.5%)
+  [INFO] Avg chars — PyTorch: 381  ONNX: 381  Reference: 415
+
+============================================================
+Qualitative Probe — Unseen Medical Terms
+============================================================
+Testing model on sentences outside the training distribution.
+
+#    PyTorch output                                           ONNX output
+------------------------------------------------------------------------------------------------------------------------
+
+[01] INPUT:   The patient was diagnosed with rhabdomyolysis following strenuous exercise, presenting with elevated creatine kinase and myoglobinuria.
+     PyTorch: The patient was diagnosed with muscle breakdown after hard exercise. This happened after high muscle enzyme levels and high levels of muscle enzymes.
+     ONNX:    The patient was diagnosed with muscle breakdown after hard exercise. This caused high levels of a protein called myoglobin in the blood.
+
+[02] INPUT:   Echocardiography revealed severe mitral valve regurgitation with left ventricular dilatation and reduced ejection fraction of 35%.
+     PyTorch: A heart ultrasound showed the mitral valve was leaking badly. The left side of the heart was enlarged and the heart was pumping only 35% of its blood with each beat.
+     ONNX:    Heart ultrasound showed the mitral valve was leaking badly. The heart was also pumping out less blood than normal.
+
+[03] INPUT:   The patient has Guillain-Barré syndrome, an autoimmune condition causing ascending paralysis due to demyelination of peripheral nerves.
+     PyTorch: The patient has Guillain-Barré syndrome. This is a condition where the body attacks its own nerves. This condition causes the nerves to stop working properly. This is caused by the nerves in the arms and legs that are pushed back together.
+     ONNX:    The patient has Guillain-Barré syndrome, a condition where the body attacks its own nerves. This is an ongoing problem that causes weakness and loss of feeling in the arms or legs.
+
+[04] INPUT:   MRI of the lumbar spine demonstrated a herniated nucleus pulposus at L4-L5 with moderate neural foraminal stenosis.
+     PyTorch: A special scan of the lower spine showed a bulging nerve at the L4-L5 level. The scan also showed a narrowing of the nerve at the base of the spine.
+     ONNX:    A special scan of the lower spine showed a bulging area in the spinal cord at the L4-L5 level. The scan also showed that part of the spinal canal was narrowed.
+
+[05] INPUT:   The patient presented with pheochromocytoma, a rare adrenal gland tumor causing episodic hypertension, diaphoresis, and tachycardia.
+     PyTorch: The patient came in with a rare tumor on the adrenal gland. The tumor was causing high blood pressure, heavy sweating, and a fast heartbeat.
+     ONNX:    The patient had a rare tumor on the adrenal gland. This tumor was causing high blood pressure, heavy sweating, and fast heartbeat.
+
+[06] INPUT:   Spirometry confirmed a restrictive ventilatory pattern with reduced total lung capacity and diffusing capacity for carbon monoxide.
+     PyTorch: A test using a thin tube to measure oxygen levels in the lungs confirmed the patient had a limited breathing pattern. The lungs were smaller than normal and could not handle carbon monoxide gas.
+     ONNX:    The patient was diagnosed with a lung condition that causes breathing problems. This means the lungs are not working well and needing to be cleaned out by carbon monoxide.
+
+[07] INPUT:   The patient underwent laparoscopic cholecystectomy for acute calculous cholecystitis with successful removal of the gallbladder.
+     PyTorch: The patient had surgery to remove the gallbladder using small cuts and a camera. The gallbladder was removed successfully.
+     ONNX:    The patient had surgery to remove the gallbladder using small cuts and a camera. This was done because the gallstones were badly inflamed and had to be removed successfully.
+
+[08] INPUT:   Laboratory results showed hyponatremia with serum sodium of 122 mEq/L, consistent with syndrome of inappropriate antidiuretic hormone secretion.
+     PyTorch: Blood tests showed low sodium levels and sodium levels in the blood. This matched a condition where the body holds too much water.
+     ONNX:    Blood tests showed low sodium levels and a salt level of 122. This confirmed the patient has an unusual condition where hormones cause too much stress.
+
+[09] INPUT:   The patient has ankylosing spondylitis, a chronic inflammatory arthritis primarily affecting the sacroiliac joints and spine.
+     PyTorch: The patient has a spine condition that causes the spine to become stiff and stiff. This condition is mainly linked to the hip joints and spine.
+     ONNX:    The patient has a spine condition called ankylosing spondylitis. This is a long-term joint disease that affects the bones in the lower back and spine.
+
+[10] INPUT:   Fundoscopic examination revealed papilledema and arteriovenous nicking suggestive of longstanding hypertensive retinopathy.
+     PyTorch: A camera exam of the back of the eye showed swelling at the back of the eye and a small hole between the upper eyelids. These findings pointed to long-term eye damage from high blood pressure.
+     ONNX:    A camera exam of the back of the eye showed swelling and abnormal blood vessel connections. This suggested long-term high blood pressure that has lasted.
+
+[11] INPUT:   The biopsy confirmed diffuse large B-cell lymphoma, an aggressive non-Hodgkin lymphoma requiring immediate chemotherapy.
+     PyTorch: The tissue sample showed a type of blood cancer called diffuse large B-cell lymphoma. This cancer is not a common type called non-Hodgkin lymphoma. It needs quick treatment right away.
+     ONNX:    The tissue sample confirmed the cancer was diffuse large B-cell lymphoma. It is an aggressive type that does not respond to common medicines. The patient needs immediate treatment.
+
+[12] INPUT:   Troponin I levels were markedly elevated at 15.2 ng/mL, confirming a non-ST-elevation myocardial infarction.
+     PyTorch: Troponin I was very high at 15.2 ng/mL. This confirmed a heart attack that was not a common type of heart attack.
+     ONNX:    The patient had very high levels of a hormone called Troponin I at 15.2 ng/mL. This confirmed the patient has a type of heart attack that affects the heart.
+
+
+============================================================
+Results
+============================================================
+  [PASS] ROUGE-L degradation: PyTorch=0.6153  ONNX=0.5516  drop=10.35%  threshold=<15% drop
+  [PASS] Repetition rate (ONNX): 0.0% of outputs have repeated 5-grams  (threshold <= 10%)
+  [PASS] Empty outputs (ONNX): 0/200 empty  (threshold <= 0%)
+  [PASS] SARI score: ONNX=62.43  PyTorch=66.98  (threshold: gap <= 6.0 pts)
+
+ALL CHECKS PASSED — ONNX export is good to upload.
+
+=== DONE @ 2026-04-16T19:37:28-05:00 — exit code: 0 ===

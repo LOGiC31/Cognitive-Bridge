@@ -1,0 +1,32 @@
+[
+  {
+    "example": 1,
+    "index": 20952,
+    "input": "Simplify this medical text for a patient: The patient's medical and surgical history was unremarkable. Physical examination did not reveal any significant findings.",
+    "target": "The patient had no past health problems or surgeries. The doctor's exam showed nothing unusual."
+  },
+  {
+    "example": 2,
+    "index": 3648,
+    "input": "Simplify this medical text for a patient: Mr. [PATIENT NAME], a 55-year-old male, presented to the hospital with subcutaneous nodules on his trunk, head, neck, and leg. He had a history of chronic hepatitis B virus infection for the past five years. The skin lesions were asymptomatic and measured 1-2 cm in size. The tumor marker values were elevated for CEA, CA 19-9, and aFP.\n\nHistopathologic examination of the subcutaneous nodule revealed that the tumor was primarily located in the subcutaneous fat layer. Cells showed positive immunoreactivity for CD56, chromogranin, and synaptophysin. The patient was diagnosed with a large cell neuroendocrine carcinoma with multiple skin metastases. The primary site of malignancy could not be identified with certainty.\n\nCT imaging revealed enhanced masses on the liver, pleura, bone, and lymph nodes. Colonoscopy did not show any abnormality. The patient received chemotherapy based on cisplatin and etoposide. Unfortunately, he died from septic shock two months after the appearance of the cutaneous lesions.",
+    "target": "Mr. [PATIENT NAME] is a 55-year-old man. He came to the hospital with lumps under the skin. These lumps were on his chest, back, head, neck, and leg. He had a liver infection called hepatitis B for the past five years. The skin lumps did not cause pain or discomfort. They were about half an inch to one inch in size. Blood tests showed higher than normal levels of certain markers that can indicate cancer.\n\nDoctors took a sample from one of the lumps and looked at it under a microscope. The lump was found in the fat layer under the skin. Special tests on the cells helped identify the type of cancer. The patient was told he had a fast-growing type of cancer called large cell neuroendocrine carcinoma. The cancer had spread to multiple areas of the skin. Doctors could not find where the cancer first started in the body.\n\nScans showed the cancer had also spread to the liver, the lining around the lungs, bones, and lymph nodes. A test to look inside the colon did not show any problems. The patient received cancer treatment using two drugs called cisplatin and etoposide. Sadly, the patient passed away from a severe infection two months after the skin lumps first appeared."
+  },
+  {
+    "example": 3,
+    "index": 819,
+    "input": "Simplify this medical text for a patient: The patient was discharged home with instructions to follow-up with her oncologist in the clinic. She is being prepared to undergo radiation therapy of the thoracic spine.",
+    "target": "The patient was sent home with instructions to see her cancer doctor at the clinic. She is getting ready to have radiation treatment aimed at her upper and middle back."
+  },
+  {
+    "example": 4,
+    "index": 9012,
+    "input": "Simplify this medical text for a patient: The patient has shown significant improvements in emotional control, participation in classroom activities, and home behavior. The patient should continue to receive prescribed medication and attend follow-up appointments. The patient and family members should focus on maximizing the patient\u2019s functioning abilities and implementing techniques to manage behavioral problems. Furthermore, the family is encouraged to seek counseling and support groups that can help them better understand the patient's condition and develop positive coping mechanisms.",
+    "target": "The patient has gotten much better at controlling emotions. The patient now joins in classroom activities and behaves better at home. The patient should keep taking all prescribed medicines. The patient should go to all follow-up appointments. The patient and family should work on building the patient's skills. They should also use techniques to handle behavior problems. The family should look for counseling and support groups. These can help them understand the patient's condition and find healthy ways to cope."
+  },
+  {
+    "example": 5,
+    "index": 8024,
+    "input": "Simplify this medical text for a patient: The patient was advised to continue with a soft diet for a week post-discharge and to avoid any heavy physical activity for at least two weeks. A follow-up appointment with his primary care provider was scheduled to ensure the continued improvement of his symptoms.",
+    "target": "The patient was told to keep eating soft foods for one week after leaving the hospital. He should not do any hard physical activity for at least two weeks. A follow-up visit with his regular doctor was set up to make sure he keeps getting better."
+  }
+]

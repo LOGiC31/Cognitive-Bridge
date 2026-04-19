@@ -1,0 +1,62 @@
+[
+  {
+    "example": 1,
+    "index": 13237,
+    "input": "Simplify this medical text for a patient: Peroneal tendon dislocation Type 3 - Strydom, accompanied by an avulsion of the anterior talofibular ligament and a partial lesion of the anterior deltoid ligament fibers.",
+    "target": "A tendon on the outer ankle had slipped out of place (Type 3 - Strydom). A ligament on the outer ankle had pulled away from the bone. Part of a ligament on the inner ankle was also torn."
+  },
+  {
+    "example": 2,
+    "index": 12476,
+    "input": "Simplify this medical text for a patient: The 16-year-old female patient was seen in our surgical clinic after her dental practitioner referred her for an early removal of her left maxillary molar for orthodontic reasons. During the surgical procedure, the tooth was accidentally lost, and subsequent CT scans revealed a third molar in a high position, causing inflammation of the maxillary sinus membrane and a dentigerous cyst. The tooth was deeply located in the buccal vestibule, requiring local anesthesia and submucosal incision for extraction. Following blunt dissection using Metzenbaum scissors and tissue forceps, the tooth was successfully removed along with the dentigerous cyst. Postoperative medication was administered, and the patient was discharged with separate mucosal sutures. The recovery period was prolonged due to the position and age of the displaced tooth.",
+    "target": "The 16-year-old female patient came to our surgery office. Her dentist sent her to have a left upper back tooth removed early for braces. During the surgery, the tooth was accidentally lost inside the mouth. Scans showed that a wisdom tooth was stuck in a high position. This caused swelling of the sinus lining and a fluid-filled sac around the tooth. The tooth was deep inside the cheek area. The surgeon numbed the area and made a small cut under the tissue to reach it. Using special scissors and tools, the surgeon carefully separated the tissue. The tooth and the fluid-filled sac were both removed. The patient received medicine after surgery. The surgeon closed the cut with stitches. Healing took longer than usual because of where the tooth was and how long it had been there."
+  },
+  {
+    "example": 3,
+    "index": 6556,
+    "input": "Simplify this medical text for a patient: Pulmonary embolism, deep venous thrombosis, myasthenia gravis, hypertension",
+    "target": "Blood clot in the lungs, blood clots in deep leg veins, muscle weakness disease, high blood pressure"
+  },
+  {
+    "example": 4,
+    "index": 19642,
+    "input": "Simplify this medical text for a patient: The patient's family was notified of her prognosis, and they were provided with supportive care options. They were advised to contact their primary care physician or oncologist if they had any concerns or questions. The patient's medical records were reviewed and shared with her healthcare providers to ensure continuity of care.",
+    "target": "The patient's family was told about what to expect. They were given information about comfort care choices. They were told to contact her regular doctor or cancer doctor if they had any worries or questions. The patient's medical records were reviewed and shared with her doctors to make sure her care continued smoothly."
+  },
+  {
+    "example": 5,
+    "index": 5858,
+    "input": "Simplify this medical text for a patient: The patient was advised to follow up with their primary care provider for further management. No further restrictions or recommendations were given at the time of discharge.\n\nFollow-up: The patient was advised to follow up with their primary care provider for further management.\n\nHospital Course Length: N/A\n\nAttending Physician: N/A\n\nDictated By: N/A\nSigned Electronically By: N/A",
+    "target": "The patient was told to schedule a visit with their regular doctor for ongoing care. No special limits or other instructions were given when the patient left the hospital.\n\nFollow-up: The patient was told to schedule a visit with their regular doctor for ongoing care.\n\nHospital Course Length: N/A\n\nAttending Physician: N/A\n\nDictated By: N/A\nSigned Electronically By: N/A"
+  },
+  {
+    "example": 6,
+    "index": 7545,
+    "input": "Simplify this medical text for a patient: MRI revealed microcephaly with significant cerebellar and brainstem hypoplasia. Chromosomal microarray performed at an outside institution revealed an interstitial duplication of 841 kB on chromosome 7q11.23.",
+    "target": "The brain scan showed a very small head. The back part of the brain and the part connecting to the spine did not grow properly. A special blood test done at another hospital looked at the baby's genes. It found an extra copy of a small piece of genetic material on chromosome 7."
+  },
+  {
+    "example": 7,
+    "index": 8140,
+    "input": "Simplify this medical text for a patient: The patient's diagnosis is a type III hinge fracture with backing out of the proximal locking pin following OWHTO with FlexitSystem.",
+    "target": "The patient has a small break at the edge of the bone cut and a top screw that slipped out of place after leg straightening surgery with FlexitSystem."
+  },
+  {
+    "example": 8,
+    "index": 4366,
+    "input": "Simplify this medical text for a patient: Rajesh was diagnosed with dissociative fugue according to DSMIV TR Text revision.",
+    "target": "Rajesh was diagnosed with dissociative fugue following DSMIV TR Text revision guidelines. This is a condition where a person suddenly loses memory of who they are."
+  },
+  {
+    "example": 9,
+    "index": 2837,
+    "input": "Simplify this medical text for a patient: The patient was managed by the oncology team during hospitalization regarding the management of malignant melanoma.",
+    "target": "The cancer care team helped take care of the patient during the hospital stay."
+  },
+  {
+    "example": 10,
+    "index": 8229,
+    "input": "Simplify this medical text for a patient: The patient underwent an open abdominoperineal resection, which revealed an ulcerated malignant melanoma of the rectum invading deep into muscularis propria, positive lymphatic and vascular invasion, 10/11 positive lymph nodes, and positive radial margins for final pathologic staging of pT3N1Mx. Immunohistochemistry staining confirmed the diagnosis of melanoma.",
+    "target": "The patient had surgery to remove the rectum and anus through an open cut in the belly. The surgery found a sore-covered melanoma in the rectum that had grown deep into the muscle wall. The cancer had spread into the lymph system and blood vessels. Cancer was found in 10 out of 11 lymph nodes. Cancer cells were also found at the edges of the tissue that was removed. Special lab tests on the tissue confirmed the cancer was melanoma."
+  }
+]

@@ -1,0 +1,148 @@
+=== Job Info ===
+Job ID: 2975514
+Node:   fc023
+GPU:    Tesla T4, 16384 MiB
+Python: Python 3.12.3
+PyTorch CUDA: available=True, device=Tesla T4
+================
+Step 1: Preparing simplification dataset...
+Dataset already exists at /scratch/user/vinaysingh/Cognitive-Bridge/training/data/simplification_pairs, skipping preparation.
+Delete the directory to re-prepare: rm -rf /scratch/user/vinaysingh/Cognitive-Bridge/training/data/simplification_pairs
+Step 2: Fine-tuning T5-small for simplification...
+Loading dataset from /scratch/user/vinaysingh/Cognitive-Bridge/training/data/simplification_pairs...
+  train: 3593 examples
+  validation: 411 examples
+  test: 480 examples
+
+Loading tokenizer: t5-small
+Tokenizing dataset...
+Loading model: t5-small
+
+Starting training (early stopping patience=3)...
+{'loss': 8.6149, 'grad_norm': 51.587982177734375, 'learning_rate': 2.7222222222222224e-06, 'epoch': 0.11}
+{'loss': 6.5514, 'grad_norm': 22.09124755859375, 'learning_rate': 5.500000000000001e-06, 'epoch': 0.22}
+{'loss': 4.1688, 'grad_norm': 3.0134265422821045, 'learning_rate': 8.27777777777778e-06, 'epoch': 0.33}
+{'loss': 3.5709, 'grad_norm': 2.669513702392578, 'learning_rate': 1.1055555555555556e-05, 'epoch': 0.44}
+{'loss': 3.2949, 'grad_norm': 1.497429370880127, 'learning_rate': 1.3833333333333334e-05, 'epoch': 0.56}
+{'loss': 3.257, 'grad_norm': 1.432224988937378, 'learning_rate': 1.661111111111111e-05, 'epoch': 0.67}
+{'loss': 3.1978, 'grad_norm': 1.2133866548538208, 'learning_rate': 1.938888888888889e-05, 'epoch': 0.78}
+{'loss': 3.1629, 'grad_norm': 1.2208060026168823, 'learning_rate': 2.216666666666667e-05, 'epoch': 0.89}
+{'loss': 3.1289, 'grad_norm': 3.216226100921631, 'learning_rate': 2.4944444444444447e-05, 'epoch': 1.0}
+{'eval_loss': 2.891352415084839, 'eval_rouge1': 31.9946, 'eval_rouge2': 9.657, 'eval_rougeL': 20.2566, 'eval_rougeLsum': 28.505, 'eval_runtime': 79.4175, 'eval_samples_per_second': 5.175, 'eval_steps_per_second': 0.327, 'epoch': 1.0}
+{'loss': 3.1056, 'grad_norm': 1.411199688911438, 'learning_rate': 2.772222222222222e-05, 'epoch': 1.11}
+{'loss': 3.0795, 'grad_norm': 1.1695746183395386, 'learning_rate': 3.05e-05, 'epoch': 1.22}
+{'loss': 3.0232, 'grad_norm': 1.352500081062317, 'learning_rate': 3.327777777777778e-05, 'epoch': 1.33}
+{'loss': 3.0011, 'grad_norm': 1.0791668891906738, 'learning_rate': 3.605555555555556e-05, 'epoch': 1.44}
+{'loss': 2.9709, 'grad_norm': 1.4753623008728027, 'learning_rate': 3.883333333333333e-05, 'epoch': 1.56}
+{'loss': 2.9612, 'grad_norm': 1.0834496021270752, 'learning_rate': 4.1611111111111114e-05, 'epoch': 1.67}
+{'loss': 3.0145, 'grad_norm': 1.5580023527145386, 'learning_rate': 4.438888888888889e-05, 'epoch': 1.78}
+{'loss': 2.9877, 'grad_norm': 1.1066539287567139, 'learning_rate': 4.716666666666667e-05, 'epoch': 1.89}
+{'loss': 2.9294, 'grad_norm': 2.4511806964874268, 'learning_rate': 4.994444444444445e-05, 'epoch': 2.0}
+{'eval_loss': 2.727146625518799, 'eval_rouge1': 35.8663, 'eval_rouge2': 11.9195, 'eval_rougeL': 22.0857, 'eval_rougeLsum': 32.2844, 'eval_runtime': 80.1752, 'eval_samples_per_second': 5.126, 'eval_steps_per_second': 0.324, 'epoch': 2.0}
+{'loss': 2.9228, 'grad_norm': 1.2251323461532593, 'learning_rate': 4.969753086419753e-05, 'epoch': 2.11}
+{'loss': 2.9269, 'grad_norm': 1.5002001523971558, 'learning_rate': 4.938888888888889e-05, 'epoch': 2.22}
+{'loss': 2.9263, 'grad_norm': 1.2512705326080322, 'learning_rate': 4.9080246913580244e-05, 'epoch': 2.33}
+{'loss': 2.8625, 'grad_norm': 1.933553695678711, 'learning_rate': 4.8771604938271606e-05, 'epoch': 2.44}
+{'loss': 2.8457, 'grad_norm': 1.1268218755722046, 'learning_rate': 4.846296296296297e-05, 'epoch': 2.56}
+{'loss': 2.8357, 'grad_norm': 1.038127064704895, 'learning_rate': 4.8154320987654324e-05, 'epoch': 2.67}
+{'loss': 2.8158, 'grad_norm': 1.0666826963424683, 'learning_rate': 4.784567901234568e-05, 'epoch': 2.78}
+{'loss': 2.86, 'grad_norm': 2.1943907737731934, 'learning_rate': 4.753703703703704e-05, 'epoch': 2.89}
+{'loss': 2.8174, 'grad_norm': 3.693695545196533, 'learning_rate': 4.7228395061728396e-05, 'epoch': 3.0}
+{'eval_loss': 2.6596903800964355, 'eval_rouge1': 36.5012, 'eval_rouge2': 12.3023, 'eval_rougeL': 22.4406, 'eval_rougeLsum': 32.8329, 'eval_runtime': 77.1825, 'eval_samples_per_second': 5.325, 'eval_steps_per_second': 0.337, 'epoch': 3.0}
+{'loss': 2.7857, 'grad_norm': 1.0377590656280518, 'learning_rate': 4.691975308641975e-05, 'epoch': 3.11}
+{'loss': 2.843, 'grad_norm': 0.9811853766441345, 'learning_rate': 4.6611111111111114e-05, 'epoch': 3.22}
+{'loss': 2.7708, 'grad_norm': 1.0129783153533936, 'learning_rate': 4.6302469135802476e-05, 'epoch': 3.33}
+{'loss': 2.7722, 'grad_norm': 1.2227643728256226, 'learning_rate': 4.599382716049383e-05, 'epoch': 3.44}
+{'loss': 2.7959, 'grad_norm': 1.1427916288375854, 'learning_rate': 4.568518518518519e-05, 'epoch': 3.56}
+{'loss': 2.8245, 'grad_norm': 1.033695936203003, 'learning_rate': 4.537654320987654e-05, 'epoch': 3.67}
+{'loss': 2.7832, 'grad_norm': 0.9964954853057861, 'learning_rate': 4.5067901234567904e-05, 'epoch': 3.78}
+{'loss': 2.7786, 'grad_norm': 1.2176812887191772, 'learning_rate': 4.475925925925926e-05, 'epoch': 3.89}
+{'loss': 2.7709, 'grad_norm': 2.7455551624298096, 'learning_rate': 4.445061728395062e-05, 'epoch': 4.0}
+{'eval_loss': 2.615736722946167, 'eval_rouge1': 36.3302, 'eval_rouge2': 12.0113, 'eval_rougeL': 22.5217, 'eval_rougeLsum': 32.7482, 'eval_runtime': 76.715, 'eval_samples_per_second': 5.357, 'eval_steps_per_second': 0.339, 'epoch': 4.0}
+{'loss': 2.7386, 'grad_norm': 1.8072811365127563, 'learning_rate': 4.414197530864198e-05, 'epoch': 4.11}
+{'loss': 2.7549, 'grad_norm': 1.1820520162582397, 'learning_rate': 4.383333333333334e-05, 'epoch': 4.22}
+{'loss': 2.779, 'grad_norm': 1.0973764657974243, 'learning_rate': 4.3524691358024695e-05, 'epoch': 4.33}
+{'loss': 2.7065, 'grad_norm': 1.090808391571045, 'learning_rate': 4.321604938271605e-05, 'epoch': 4.44}
+{'loss': 2.7494, 'grad_norm': 0.8825883269309998, 'learning_rate': 4.2907407407407406e-05, 'epoch': 4.56}
+{'loss': 2.7796, 'grad_norm': 5.610301971435547, 'learning_rate': 4.259876543209877e-05, 'epoch': 4.67}
+{'loss': 2.72, 'grad_norm': 1.0659998655319214, 'learning_rate': 4.229012345679012e-05, 'epoch': 4.78}
+{'loss': 2.6908, 'grad_norm': 1.206824779510498, 'learning_rate': 4.1981481481481485e-05, 'epoch': 4.89}
+{'loss': 2.7007, 'grad_norm': 5.201699733734131, 'learning_rate': 4.167283950617284e-05, 'epoch': 5.0}
+{'eval_loss': 2.5877153873443604, 'eval_rouge1': 36.9664, 'eval_rouge2': 12.2385, 'eval_rougeL': 22.452, 'eval_rougeLsum': 33.3369, 'eval_runtime': 75.5859, 'eval_samples_per_second': 5.438, 'eval_steps_per_second': 0.344, 'epoch': 5.0}
+{'loss': 2.6901, 'grad_norm': 0.9208865761756897, 'learning_rate': 4.13641975308642e-05, 'epoch': 5.11}
+{'loss': 2.7819, 'grad_norm': 1.0199284553527832, 'learning_rate': 4.105555555555556e-05, 'epoch': 5.22}
+{'loss': 2.7077, 'grad_norm': 1.0117967128753662, 'learning_rate': 4.0746913580246914e-05, 'epoch': 5.33}
+{'loss': 2.6776, 'grad_norm': 1.218172311782837, 'learning_rate': 4.043827160493827e-05, 'epoch': 5.44}
+{'loss': 2.6926, 'grad_norm': 1.0959914922714233, 'learning_rate': 4.012962962962963e-05, 'epoch': 5.56}
+{'loss': 2.6474, 'grad_norm': 1.217896580696106, 'learning_rate': 3.982098765432099e-05, 'epoch': 5.67}
+{'loss': 2.6863, 'grad_norm': 1.2316259145736694, 'learning_rate': 3.951234567901235e-05, 'epoch': 5.78}
+{'loss': 2.7309, 'grad_norm': 1.156746745109558, 'learning_rate': 3.9203703703703704e-05, 'epoch': 5.89}
+{'loss': 2.6433, 'grad_norm': 7.06230354309082, 'learning_rate': 3.8895061728395066e-05, 'epoch': 6.0}
+{'eval_loss': 2.5621392726898193, 'eval_rouge1': 36.8716, 'eval_rouge2': 12.2563, 'eval_rougeL': 22.6126, 'eval_rougeLsum': 33.1127, 'eval_runtime': 80.0674, 'eval_samples_per_second': 5.133, 'eval_steps_per_second': 0.325, 'epoch': 6.0}
+{'loss': 2.6426, 'grad_norm': 1.033556580543518, 'learning_rate': 3.858641975308642e-05, 'epoch': 6.11}
+{'loss': 2.7057, 'grad_norm': 1.0686085224151611, 'learning_rate': 3.827777777777778e-05, 'epoch': 6.22}
+{'loss': 2.6277, 'grad_norm': 1.1488385200500488, 'learning_rate': 3.796913580246914e-05, 'epoch': 6.33}
+{'loss': 2.6709, 'grad_norm': 0.9422662854194641, 'learning_rate': 3.76604938271605e-05, 'epoch': 6.44}
+{'loss': 2.6588, 'grad_norm': 1.0132977962493896, 'learning_rate': 3.7351851851851857e-05, 'epoch': 6.56}
+{'loss': 2.6625, 'grad_norm': 0.947453498840332, 'learning_rate': 3.704320987654321e-05, 'epoch': 6.67}
+{'loss': 2.6901, 'grad_norm': 1.0715373754501343, 'learning_rate': 3.673456790123457e-05, 'epoch': 6.78}
+{'loss': 2.6701, 'grad_norm': 1.365584373474121, 'learning_rate': 3.642592592592593e-05, 'epoch': 6.89}
+{'loss': 2.6595, 'grad_norm': 2.8789615631103516, 'learning_rate': 3.6117283950617285e-05, 'epoch': 7.0}
+{'eval_loss': 2.5406575202941895, 'eval_rouge1': 36.6066, 'eval_rouge2': 12.0425, 'eval_rougeL': 22.4402, 'eval_rougeLsum': 32.8207, 'eval_runtime': 76.783, 'eval_samples_per_second': 5.353, 'eval_steps_per_second': 0.339, 'epoch': 7.0}
+{'loss': 2.6425, 'grad_norm': 1.2221537828445435, 'learning_rate': 3.580864197530864e-05, 'epoch': 7.11}
+{'loss': 2.635, 'grad_norm': 0.9909508228302002, 'learning_rate': 3.55e-05, 'epoch': 7.22}
+{'loss': 2.605, 'grad_norm': 1.0463612079620361, 'learning_rate': 3.5191358024691364e-05, 'epoch': 7.33}
+{'loss': 2.6314, 'grad_norm': 0.9043915867805481, 'learning_rate': 3.488271604938272e-05, 'epoch': 7.44}
+{'loss': 2.6455, 'grad_norm': 1.1948866844177246, 'learning_rate': 3.4574074074074075e-05, 'epoch': 7.56}
+{'loss': 2.644, 'grad_norm': 1.1326844692230225, 'learning_rate': 3.426543209876543e-05, 'epoch': 7.67}
+{'loss': 2.6485, 'grad_norm': 1.8718396425247192, 'learning_rate': 3.395679012345679e-05, 'epoch': 7.78}
+{'loss': 2.6045, 'grad_norm': 1.0142221450805664, 'learning_rate': 3.364814814814815e-05, 'epoch': 7.89}
+{'loss': 2.6551, 'grad_norm': 3.278942108154297, 'learning_rate': 3.333950617283951e-05, 'epoch': 8.0}
+{'eval_loss': 2.5309736728668213, 'eval_rouge1': 37.2264, 'eval_rouge2': 12.2427, 'eval_rougeL': 22.4767, 'eval_rougeLsum': 33.4864, 'eval_runtime': 78.4654, 'eval_samples_per_second': 5.238, 'eval_steps_per_second': 0.331, 'epoch': 8.0}
+{'loss': 2.6303, 'grad_norm': 1.277629017829895, 'learning_rate': 3.3030864197530866e-05, 'epoch': 8.11}
+{'loss': 2.6271, 'grad_norm': 1.2500985860824585, 'learning_rate': 3.272222222222223e-05, 'epoch': 8.22}
+{'loss': 2.6059, 'grad_norm': 1.8497400283813477, 'learning_rate': 3.241358024691358e-05, 'epoch': 8.33}
+{'loss': 2.6335, 'grad_norm': 1.041427731513977, 'learning_rate': 3.210493827160494e-05, 'epoch': 8.44}
+{'loss': 2.6222, 'grad_norm': 1.1018245220184326, 'learning_rate': 3.1796296296296294e-05, 'epoch': 8.56}
+{'loss': 2.6294, 'grad_norm': 1.0612990856170654, 'learning_rate': 3.1487654320987656e-05, 'epoch': 8.67}
+{'loss': 2.6067, 'grad_norm': 1.038496732711792, 'learning_rate': 3.117901234567902e-05, 'epoch': 8.78}
+{'loss': 2.6273, 'grad_norm': 1.2031073570251465, 'learning_rate': 3.0870370370370374e-05, 'epoch': 8.89}
+{'loss': 2.5817, 'grad_norm': 3.021609306335449, 'learning_rate': 3.056172839506173e-05, 'epoch': 9.0}
+{'eval_loss': 2.5187313556671143, 'eval_rouge1': 36.8446, 'eval_rouge2': 11.9585, 'eval_rougeL': 22.2256, 'eval_rougeLsum': 33.2037, 'eval_runtime': 73.7176, 'eval_samples_per_second': 5.575, 'eval_steps_per_second': 0.353, 'epoch': 9.0}
+{'train_runtime': 1612.4455, 'train_samples_per_second': 44.566, 'train_steps_per_second': 5.582, 'train_loss': 2.9271457361291957, 'epoch': 9.0}
+
+Evaluating on test set...
+Test Results: {'eval_loss': 2.579604387283325, 'eval_rouge1': 38.1105, 'eval_rouge2': 12.9401, 'eval_rougeL': 22.5981, 'eval_rougeLsum': 34.47, 'eval_runtime': 89.1675, 'eval_samples_per_second': 5.383, 'eval_steps_per_second': 0.336, 'epoch': 9.0}
+
+Best model saved to /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/output/best_model
+
+Sample predictions:
+  Input:  Simplify this medical text for a patient: The patient presents with acute myocardial infarction with ST-segment elevation.
+  Output: This review of medical literature is current to April 2019.
+
+  Input:  Simplify this medical text for a patient: Labs reveal elevated creatinine at 2.8 mg/dL suggestive of acute kidney injury.
+  Output: This review is currently out to April 2019.
+
+Step 3: Exporting to ONNX...
+Exporting T5 model from /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/output/best_model to ONNX...
+ONNX model exported to /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_model
+Generated 2 ONNX files:
+  decoder_model.onnx: 159.0 MB
+  encoder_model.onnx: 134.9 MB
+
+Applying 8-bit dynamic quantization...
+  Quantizing decoder_model.onnx -> decoder_model_quantized.onnx
+  Quantizing encoder_model.onnx -> encoder_model_quantized.onnx
+
+Original total size:  293.8 MB
+Quantized total size: 73.9 MB
+Compression ratio:    4.0x
+Quantized model saved to /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized
+  Copied decoder_model_quantized.onnx -> onnx/decoder_model_quantized.onnx
+  Copied encoder_model_quantized.onnx -> onnx/encoder_model_quantized.onnx
+
+Model ready for Transformers.js at /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized
+Files in onnx/ subdirectory:
+  decoder_model_quantized.onnx: 40.0 MB
+  encoder_model_quantized.onnx: 33.9 MB
+=== Done ===

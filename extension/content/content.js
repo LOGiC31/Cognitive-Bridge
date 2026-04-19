@@ -22,6 +22,7 @@ class CognitiveBridge {
     this.pendingNodes = [];
     this.debounceTimer = null;
     this.observer = null;
+    this._applyingHighlights = false;
   }
 
   async init() {
@@ -67,6 +68,8 @@ class CognitiveBridge {
     if (this.observer) return;
 
     this.observer = new MutationObserver((mutations) => {
+      if (this._applyingHighlights) return;
+
       for (const mutation of mutations) {
         if (mutation.type === 'childList') {
           for (const node of mutation.addedNodes) {
@@ -100,7 +103,12 @@ class CognitiveBridge {
 
     if (root.nodeType === Node.TEXT_NODE) {
       const parent = root.parentElement;
-      if (parent && !this.processedNodes.has(parent)) {
+      if (
+        parent &&
+        !this.processedNodes.has(parent) &&
+        parent.tagName !== 'MARK' &&
+        !(parent.classList && parent.classList.contains('cb-highlight'))
+      ) {
         this.scheduleNode(parent);
       }
       return;
@@ -109,8 +117,8 @@ class CognitiveBridge {
     if (root.nodeType !== Node.ELEMENT_NODE) return;
 
     const tag = root.tagName;
-    if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'SVG', 'CANVAS'].includes(tag)) return;
-    if (root.classList && root.classList.contains('cb-processed')) return;
+    if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'SVG', 'CANVAS', 'MARK'].includes(tag)) return;
+    if (root.classList && (root.classList.contains('cb-processed') || root.classList.contains('cb-highlight'))) return;
 
     for (const child of root.childNodes) {
       this.collectTextNodes(child);
@@ -139,7 +147,12 @@ class CognitiveBridge {
       try {
         const results = await this.pipeline.process(text);
         if (results && results.length > 0) {
-          this.tooltipManager.applyHighlights(node, results);
+          this._applyingHighlights = true;
+          try {
+            this.tooltipManager.applyHighlights(node, results);
+          } finally {
+            this._applyingHighlights = false;
+          }
           this.reportStats(results);
         }
       } catch (err) {

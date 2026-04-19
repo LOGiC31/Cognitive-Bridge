@@ -1,0 +1,48 @@
+=== Job Info ===
+Job ID:    2987870
+Node:      fc101
+GPU:       Tesla T4, 16384 MiB
+Python:    Python 3.12.3
+Venv:      /scratch/user/vinaysingh/cb-venv/bin/python3
+CUDA:      available=True, device=Tesla T4
+HF_HOME:   /scratch/user/vinaysingh/.cache/huggingface
+OFFLINE:   HF_DATASETS_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_EVALUATE_OFFLINE=1 HF_HUB_OFFLINE=1
+================
+
+Eval settings:
+  SPLIT=test
+  MAX_SAMPLES=200
+  MAX_NEW_TOKENS=256
+  NUM_BEAMS=4
+  QUAL_SAMPLES=8
+  QUAL_OUT=logs/t5_medisimplifier_qual_2987870.jsonl
+
+Dataset: /scratch/user/vinaysingh/Cognitive-Bridge/training/data/simplification_pairs_medisimplifier
+Split:   test
+Rows:    200 / 1000
+Torch:   /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/output_medisimplifier/best_model
+ONNX:    /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier
+
+=== PyTorch ===
+device: cuda
+=== ROUGE: PyTorch vs reference ===
+{
+  "rouge1": 0.5963354657076807,
+  "rouge2": 0.3911961014587565,
+  "rougeL": 0.4790274643675383,
+  "rougeLsum": 0.5294446794851397
+}
+rouge1 (mid fmeasure %): 59.6335
+rouge2 (mid fmeasure %): 39.1196
+rougeL (mid fmeasure %): 47.9027
+rougeLsum (mid fmeasure %): 52.9445
+
+avg_pred_chars: 1076.6
+avg_ref_chars:  1943.3
+
+Note: resolved Optimum ONNX load paths for library inference + file discovery:
+  requested --onnx_dir: /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier
+  optimum model_id:     /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier
+  optimum subfolder:    'onnx'
+  effective onnx dir:   /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier/onnx
+

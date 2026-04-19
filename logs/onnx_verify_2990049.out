@@ -1,0 +1,18 @@
+=== Job Info ===
+Job ID:  2990049
+Node:    fc103
+GPU:     Tesla T4, 16384 MiB
+Python:  Python 3.12.3
+================
+
+============================================================
+Cognitive Bridge — ONNX Export Verification
+============================================================
+Split:       test  (200 samples)
+PyTorch:     /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/output_medisimplifier/best_model
+ONNX:        /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier
+max_new_tokens=256  num_beams=1
+
+PyTorch device: cuda
+
+ONNX provider: CPUExecutionProvider

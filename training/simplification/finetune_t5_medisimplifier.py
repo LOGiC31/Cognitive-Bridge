@@ -1,36 +1,37 @@
 """
-Fine-tune T5-small for medical text simplification.
+Fine-tune T5-small for medical text simplification (Medisimplifier dataset).
 
-Trains a text-to-text model on the GEM/cochrane-simplification dataset
-(supplemented with curated clinical pairs) to simplify complex medical
-language into patient-friendly explanations.
+This script is identical in spirit to `finetune_t5.py` but points to:
+  training/data/simplification_pairs_medisimplifier
 
 Usage:
-    python training/data/prepare_simplification.py   # prepare data first
-    python training/simplification/finetune_t5.py
+  python training/data/prepare_simplification_medisimplifier.py
+  python training/simplification/finetune_t5_medisimplifier.py
 
 Output:
-    training/simplification/output/  — fine-tuned model checkpoint
+  training/simplification/output_medisimplifier/ — fine-tuned model checkpoint
 """
 
 import os
-import torch
-import numpy as np
-from datasets import load_from_disk
-from transformers import (
-    AutoTokenizer,
-    AutoModelForSeq2SeqLM,
-    Seq2SeqTrainingArguments,
-    Seq2SeqTrainer,
-    DataCollatorForSeq2Seq,
-    EarlyStoppingCallback,
-)
+import random
+
 import evaluate
 import nltk
+import numpy as np
+import torch
+from datasets import load_from_disk
+from transformers import (
+    AutoModelForSeq2SeqLM,
+    AutoTokenizer,
+    DataCollatorForSeq2Seq,
+    EarlyStoppingCallback,
+    Seq2SeqTrainer,
+    Seq2SeqTrainingArguments,
+)
 
 NLTK_DATA_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    ".nltk_data"
+    ".nltk_data",
 )
 nltk.data.path.insert(0, NLTK_DATA_DIR)
 for pkg in ("tokenizers/punkt", "tokenizers/punkt_tab"):
@@ -41,13 +42,20 @@ for pkg in ("tokenizers/punkt", "tokenizers/punkt_tab"):
 
 DATASET_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "data", "simplification_pairs"
+    "data",
+    "simplification_pairs_medisimplifier",
 )
-OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output")
+
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output_medisimplifier")
 MODEL_NAME = "google/flan-t5-small"
 
+# Dataset is now section-level pairs (avg ~115 input tokens, ~100 target tokens).
+# p99 input tokens = ~430, p99 target tokens = ~395 — both fit within T5-small's
+# 512-token architectural limit with no truncation needed.
+# verify_simplification_dataset.py recommends MAX_TARGET_LENGTH ~410 to cover p99.
 MAX_INPUT_LENGTH = 512
-MAX_TARGET_LENGTH = 256
+MAX_TARGET_LENGTH = 512
+
 LEARNING_RATE = 3e-4
 BATCH_SIZE = 16
 NUM_EPOCHS = 30
@@ -57,7 +65,6 @@ EARLY_STOPPING_PATIENCE = 5
 
 
 def preprocess(examples, tokenizer):
-    """Tokenize input/target pairs with dynamic padding."""
     model_inputs = tokenizer(
         examples["input_text"],
         max_length=MAX_INPUT_LENGTH,
@@ -73,8 +80,7 @@ def preprocess(examples, tokenizer):
     )
 
     model_inputs["labels"] = [
-        [(l if l != tokenizer.pad_token_id else -100) for l in label]
-        for label in labels["input_ids"]
+        [(l if l != tokenizer.pad_token_id else -100) for l in label] for label in labels["input_ids"]
     ]
 
     return model_inputs
@@ -84,7 +90,6 @@ _rouge = None
 
 
 def compute_metrics(eval_pred, tokenizer):
-    """Compute ROUGE metrics for simplification quality."""
     global _rouge
     if _rouge is None:
         _rouge = evaluate.load("rouge")
@@ -115,11 +120,29 @@ def compute_metrics(eval_pred, tokenizer):
     return {k: round(v * 100, 4) for k, v in result.items()}
 
 
+def print_dataset_sanity(dataset):
+    print("\nDataset sanity-check (random samples):")
+    rng = random.Random(7)
+    for split in ("train", "validation", "test"):
+        if split not in dataset:
+            continue
+        d = dataset[split]
+        print(f"- {split}: {len(d)} examples")
+        if len(d) == 0:
+            continue
+        for idx in rng.sample(range(len(d)), k=min(2, len(d))):
+            ex = d[int(idx)]
+            print("  INPUT :", ex["input_text"][:240].replace("\n", " ") + ("…" if len(ex["input_text"]) > 240 else ""))
+            print("  TARGET:", ex["target_text"][:240].replace("\n", " ") + ("…" if len(ex["target_text"]) > 240 else ""))
+            print("  ---")
+
+
 def main():
     print(f"Loading dataset from {DATASET_PATH}...")
     dataset = load_from_disk(DATASET_PATH)
     for split in dataset:
         print(f"  {split}: {len(dataset[split])} examples")
+    print_dataset_sanity(dataset)
 
     print(f"\nLoading tokenizer: {MODEL_NAME}")
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
@@ -135,8 +158,12 @@ def main():
     model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME)
 
     data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model)
-
     use_cuda = torch.cuda.is_available()
+
+    # Use available CPUs for DataLoader workers (SLURM allocates 8 CPUs; keep 1 for main process).
+    num_workers = max(1, int(os.environ.get("SLURM_CPUS_PER_TASK", "4")) - 1)
+
+    use_bf16 = use_cuda and torch.cuda.get_device_capability()[0] >= 8  # A100 supports bf16
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=OUTPUT_DIR,
@@ -150,15 +177,17 @@ def main():
         warmup_ratio=WARMUP_RATIO,
         predict_with_generate=True,
         dataloader_pin_memory=use_cuda,
+        dataloader_num_workers=num_workers,
         generation_max_length=MAX_TARGET_LENGTH,
         load_best_model_at_end=True,
         metric_for_best_model="rougeL",
         greater_is_better=True,
         logging_steps=50,
-        bf16=torch.cuda.is_available() and torch.cuda.get_device_capability()[0] >= 8,
+        bf16=use_bf16,
         report_to="none",
         save_total_limit=3,
     )
+    print(f"\nTraining config: bf16={use_bf16}, dataloader_num_workers={num_workers}")
 
     trainer = Seq2SeqTrainer(
         model=model,
@@ -185,8 +214,8 @@ def main():
 
     print("\nSample predictions:")
     sample_inputs = [
-        "Simplify this medical text for a patient: The patient presents with acute myocardial infarction with ST-segment elevation.",
-        "Simplify this medical text for a patient: Labs reveal elevated creatinine at 2.8 mg/dL suggestive of acute kidney injury.",
+        "Simplify this medical text for a patient: Patient presents with persistent dyspnea on exertion and bilateral lower extremity edema.",
+        "Simplify this medical text for a patient: Hemoglobin A1c of 9.2% indicates poorly controlled diabetes mellitus type 2 despite metformin.",
     ]
     inputs = tokenizer(sample_inputs, return_tensors="pt", padding=True, truncation=True, max_length=MAX_INPUT_LENGTH)
     if use_cuda:
@@ -200,3 +229,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

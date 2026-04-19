@@ -1,0 +1,30 @@
+=== Job Info ===
+Job ID: 2975715
+Node:   fc023
+GPU:    Tesla T4, 16384 MiB
+Python: Python 3.12.3
+PyTorch CUDA: available=True, device=Tesla T4
+================
+Step 1: Preparing simplification dataset...
+Dataset already exists at /scratch/user/vinaysingh/Cognitive-Bridge/training/data/simplification_pairs, skipping preparation.
+Delete the directory to re-prepare: rm -rf /scratch/user/vinaysingh/Cognitive-Bridge/training/data/simplification_pairs
+Step 2: Fine-tuning T5-small for simplification...
+Loading dataset from /scratch/user/vinaysingh/Cognitive-Bridge/training/data/simplification_pairs...
+  train: 3593 examples
+  validation: 411 examples
+  test: 480 examples
+
+Loading tokenizer: google/flan-t5-small
+Tokenizing dataset...
+Loading model: google/flan-t5-small
+
+Starting training (early stopping patience=3)...
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 2.7222222222222224e-06, 'epoch': 0.11}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 5.500000000000001e-06, 'epoch': 0.22}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 8.27777777777778e-06, 'epoch': 0.33}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 1.1055555555555556e-05, 'epoch': 0.44}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 1.3833333333333334e-05, 'epoch': 0.56}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 1.661111111111111e-05, 'epoch': 0.67}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 1.938888888888889e-05, 'epoch': 0.78}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 2.216666666666667e-05, 'epoch': 0.89}
+{'loss': 0.0, 'grad_norm': nan, 'learning_rate': 2.4944444444444447e-05, 'epoch': 1.0}

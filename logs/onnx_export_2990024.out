@@ -1,0 +1,35 @@
+=== Job Info ===
+Job ID:  2990024
+Node:    fc103
+Python:  Python 3.12.3
+================
+Exporting T5 model from /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/output_medisimplifier/best_model to ONNX...
+  Patched generation_config.json at /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_model_medisimplifier/generation_config.json
+ONNX model exported to /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_model_medisimplifier
+Generated 4 ONNX files:
+  decoder_model.onnx: 221.8 MB
+  encoder_model.onnx: 134.9 MB
+  decoder_with_past_model.onnx: 209.8 MB
+  decoder_model_merged.onnx: 222.0 MB
+
+Applying 8-bit dynamic quantization...
+  Quantizing decoder_model.onnx -> decoder_model_quantized.onnx
+  Quantizing encoder_model.onnx -> encoder_model_quantized.onnx
+  Quantizing decoder_with_past_model.onnx -> decoder_with_past_model_quantized.onnx
+  Quantizing decoder_model_merged.onnx -> decoder_model_merged_quantized.onnx
+  Patched generation_config.json at /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier/generation_config.json
+
+Original total size:  788.5 MB
+Quantized total size: 364.9 MB
+Compression ratio:    2.2x
+Quantized model saved to /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier
+  Copied encoder_model_quantized.onnx -> onnx/encoder_model_quantized.onnx
+  Copied decoder_model_merged_quantized.onnx -> onnx/decoder_model_merged_quantized.onnx
+
+Model ready for Transformers.js at /scratch/user/vinaysingh/Cognitive-Bridge/training/simplification/onnx_quantized_medisimplifier
+Files in onnx/ subdirectory:
+  decoder_model_merged_quantized.onnx: 222.2 MB
+  encoder_model_quantized.onnx: 34.0 MB
+
+=== DONE @ 2026-04-16T17:39:48-05:00 ===
+Next: sbatch verify_onnx_export.slurm
