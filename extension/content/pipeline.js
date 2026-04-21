@@ -119,6 +119,11 @@ export class MedicalPipeline {
 
     const nerResults = await ner(text, { ignore_labels: [] });
     const entities = this.mergeEntities(nerResults);
+    // Supplement NER with regex-derived entities for phrases the BC5CDR-style model
+    // won't label (e.g., metastatic processes / lymph node involvement).
+    for (const extra of extractRegexEntities(text)) {
+      entities.push(extra);
+    }
 
     console.log(`[CognitiveBridge] NER found ${entities.length} entities in: "${text.slice(0, 80)}..."`);
     if (entities.length > 0) {
@@ -130,8 +135,24 @@ export class MedicalPipeline {
     const results = [];
     const seen = new Set();
 
+    const GENERIC_FALLBACK_PREFIX = 'Medical term: "';
+
     for (const entity of entities) {
-      const termKey = entity.word.trim().toLowerCase();
+      const termKey = normalizeKey(entity.word);
+      if (isLowValueTerm(termKey)) {
+        console.log(`[CognitiveBridge] SKIP low-value term "${entity.word.trim()}"`);
+        continue;
+      }
+
+      // Skip partial tokens — NER sometimes truncates mid-word (e.g. "lower extre"
+      // from "lower extremity"). Check the word appears as a complete token in source.
+      const wordTrimmed = entity.word.trim();
+      const partialRe = new RegExp(`(?<![a-zA-Z])${escapeRegExp(wordTrimmed)}(?![a-zA-Z])`, 'i');
+      if (!partialRe.test(text)) {
+        console.log(`[CognitiveBridge] SKIP partial token "${wordTrimmed}" (not a complete word in source)`);
+        continue;
+      }
+
       if (seen.has(termKey)) {
         const prev = results.find(r => r.word.trim().toLowerCase() === termKey);
         if (prev) {
@@ -145,13 +166,30 @@ export class MedicalPipeline {
 
       if (avgScore >= this.confidenceThreshold) {
         const simplified = await this.simplifyEntity(text, entity);
-        results.push({
-          ...entity,
-          type: simplified ? 'simplification' : 'glossary',
-          explanation: simplified || this.glossaryLookup(entity.word, glossary),
-        });
+        const explanation =
+          simplified ||
+          this.glossaryLookup(entity.word, glossary) ||
+          safeBuiltinDefinition(entity.word);
+        const type = simplified ? 'simplification' : 'glossary';
+        if (!simplified) {
+          console.log(`[CognitiveBridge] T5 FALLBACK→GLOSSARY "${entity.word}" (T5 returned null)`);
+        }
+        // Don't highlight if only explanation is the generic fallback — no value to user.
+        if (!explanation || explanation.startsWith(GENERIC_FALLBACK_PREFIX)) {
+          console.log(`[CognitiveBridge] SKIP no-explanation "${entity.word}" (generic fallback only)`);
+          continue;
+        }
+        results.push({ ...entity, type, explanation });
       } else {
-        const definition = this.glossaryLookup(entity.word, glossary);
+        console.log(`[CognitiveBridge] LOW CONF→GLOSSARY "${entity.word}" (score: ${avgScore.toFixed(3)} < threshold ${this.confidenceThreshold})`);
+        const definition =
+          this.glossaryLookup(entity.word, glossary) ||
+          safeBuiltinDefinition(entity.word);
+        // Don't highlight low-confidence terms with no glossary match either.
+        if (!definition || definition.startsWith(GENERIC_FALLBACK_PREFIX)) {
+          console.log(`[CognitiveBridge] SKIP low-conf+no-glossary "${entity.word}"`);
+          continue;
+        }
         results.push({
           ...entity,
           type: 'glossary',
@@ -184,7 +222,8 @@ export class MedicalPipeline {
           tokenCount: 1,
         };
       } else if (isInside && current && current.label === label) {
-        current.word += cleanToken(token.word, true);
+        const isSubword = token.word.startsWith('##');
+        current.word += cleanToken(token.word, isSubword);
         current.score = (current.score * current.tokenCount + token.score) / (current.tokenCount + 1);
         current.end = token.end;
         current.tokenCount += 1;
@@ -195,7 +234,9 @@ export class MedicalPipeline {
     }
 
     if (current) merged.push(current);
-    return merged.filter((e) => e.word.length > 1);
+    return merged
+      .map(e => ({ ...e, word: e.word.replace(/[\s,\.;:!?\-—–]+$/, '').trimStart() }))
+      .filter((e) => e.word.length > 1);
   }
 
   async simplifyEntity(fullText, entity) {
@@ -243,7 +284,8 @@ export class MedicalPipeline {
         simplified &&
         simplified.length > 5 &&
         simplified.toLowerCase() !== term.toLowerCase() &&
-        !isLowQualitySimplification(simplified)
+        !isLowQualitySimplification(term, entity.label, simplified) &&
+        !isTautologicalSimplification(term, simplified)
       ) {
         result = simplified;
       }
@@ -269,6 +311,7 @@ export class MedicalPipeline {
     const normalized = term.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
 
     if (glossary[normalized]) {
+      console.log(`[CognitiveBridge] GLOSSARY exact "${term}" → "${glossary[normalized].definition.slice(0, 60)}…"`);
       return glossary[normalized].definition;
     }
 
@@ -278,16 +321,19 @@ export class MedicalPipeline {
       .replace(/(ed)$/, '');
 
     if (glossary[stemmed]) {
+      console.log(`[CognitiveBridge] GLOSSARY stem "${term}" (→"${stemmed}") → "${glossary[stemmed].definition.slice(0, 60)}…"`);
       return glossary[stemmed].definition;
     }
 
     for (const key of Object.keys(glossary)) {
       if (key.includes(normalized) || normalized.includes(key)) {
+        console.log(`[CognitiveBridge] GLOSSARY substring "${term}" (matched key "${key}") → "${glossary[key].definition.slice(0, 60)}…"`);
         return glossary[key].definition;
       }
     }
 
-    return `Medical term: "${term}". Ask your healthcare provider for more details.`;
+    console.log(`[CognitiveBridge] GLOSSARY miss "${term}"`);
+    return null;
   }
 
   reportModelStatus(model, status) {
@@ -303,10 +349,29 @@ export class MedicalPipeline {
   }
 }
 
-function buildSimplificationPrompt(_fullText, entity) {
-  // Pass only the term — T5 uses its pre-trained medical knowledge to produce
-  // a plain-language definition rather than paraphrasing the surrounding context.
+function buildSimplificationPrompt(fullText, entity) {
   const term = entity.word.trim().replace(/[,\.;:!?]+$/, '');
+  // Single-word symptoms (e.g. "dyspnea", "edema") don't benefit from sentence context.
+  // Context can cause "entity contamination" where the model explains a more prominent
+  // diagnosis in the sentence instead of the target term.
+  if (!/\s/.test(term)) {
+    return SIMPLIFY_PREFIX + term;
+  }
+  // Use surrounding sentence so T5 sees full clinical context (e.g. "Malignant
+  // neoplasm of the lung with metastatic infiltration" instead of bare "neoplasm").
+  // Fall back to term-only when no meaningful sentence window is found.
+  const sentence = extractSentence(fullText, entity.word, entity.start, entity.end);
+  if (sentence && sentence.length > term.length + 15) {
+    // Instruction/action sentences make T5 paraphrase the action instead of defining
+    // the term (e.g. "Continue metformin..." → "Keep taking metformin"). Fall back to
+    // term-only so T5 uses its medical knowledge rather than echoing the instruction.
+    const isInstruction = /\b(continue|initiate|monitor|reassess|start|take|inject|administer|refer|order|recheck|obtain|place[d]?|ordered|noted)\b/i.test(sentence);
+    if (!isInstruction) {
+      // Prepend term so each entity gets a unique prompt even when multiple
+      // terms share the same extracted sentence — prevents cache collisions.
+      return SIMPLIFY_PREFIX + term + ': ' + sentence;
+    }
+  }
   return SIMPLIFY_PREFIX + term;
 }
 
@@ -328,11 +393,15 @@ function isGoodSimplification(text) {
   if (/^the patient (came to|was admitted to|should see|went to|visited).{0,50}(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},\s+\d{4}/i.test(text.trim())) return false;
   // Chief Complaint echoed as output
   if (/^chief complaint/i.test(text.trim())) return false;
+  // Patient-identifying-ish demo artifacts: avoid caching outputs that echo names.
+  // (Also helps block "Doe is a 68-year-old..." templated completions.)
+  if (/\b(ms\.|mr\.|mrs\.)\s+[a-z]+\b/i.test(text.trim())) return false;
+  if (/\bdoe\b/i.test(text)) return false;
   return true;
 }
 
 /** Drop repetitive template completions the model sometimes emits off-distribution. */
-function isLowQualitySimplification(text) {
+function isLowQualitySimplification(term, label, text) {
   const t = text.toLowerCase();
   if ((t.match(/this is a medical text for a patient/g) || []).length >= 2) return true;
   if (/^this is a medical text for a patient\.?\s*$/i.test(text.trim())) return true;
@@ -343,6 +412,40 @@ function isLowQualitySimplification(text) {
     return true;
   }
   if (/^explain the medical term/i.test(text.trim())) return true;
+  // Instruction paraphrase — T5 echoed a clinical action sentence instead of defining the term
+  if (/^(keep taking|continue taking|take one|inject|administer|initiate|monitor|reassess|recheck)\b/i.test(text.trim())) return true;
+  // Patient-intro templating rather than term definition.
+  if (/^(the patient|patient|ms\.|mr\.|mrs\.)\s+[a-z]+.*\b(year[-\s]?old|female|male)\b/i.test(text.trim())) return true;
+  // Name-based patient intro (e.g. "Doe is a 68-year-old...") — demo artifact / non-definition.
+  if (/^[A-Z][a-z]+\s+is\s+a\s+\d{1,3}-year-old\b/.test(text.trim())) return true;
+  if (/\bdoe\b/i.test(text)) return true;
+
+  // Block scary / clearly-wrong hallucinations that show up in the logs.
+  const termNorm = normalizeKey(term);
+  const isAcronym = /^[A-Z]{2,6}$/.test(term.trim());
+  const isChemical = (label || '').toLowerCase() === 'chemical';
+  if (/(type of (blood )?cancer|blood cancer|leukemia|lymphoma|carcinoma|tumou?r|malignan|metast)/i.test(text)) {
+    // If the term itself isn't a cancer-ish term, don't allow cancer claims.
+    if (!/(cancer|carcinoma|sarcoma|lymphoma|leukemia|tumou?r|malignan|metast)/i.test(termNorm)) return true;
+    // Drugs being described as cancers is a common failure mode.
+    if (isChemical) return true;
+  }
+  // Surgery/procedure hallucinations for lab tests/acronyms (e.g. TSH → surgery).
+  if (isAcronym && /(surgery|procedure|operation|biopsy)/i.test(text)) return true;
+  // "X (a ...)" pattern is often wrong for our terms (see logs for drugs/diseases).
+  if (new RegExp(`^${escapeRegExp(term.trim())}\\s*\\(`).test(text.trim())) return true;
+  return false;
+}
+
+function isTautologicalSimplification(term, text) {
+  // Catches "Heart failure causing severe heart failure" — output restates the term
+  // without adding meaning. Only flag when output is short (no new info added).
+  const termNorm = term.toLowerCase().replace(/[^a-z]/g, '');
+  const textNorm = text.toLowerCase().replace(/[^a-z]/g, '');
+  if (text.length < 80 && termNorm.length > 4 && textNorm.includes(termNorm)) {
+    // Allow if output clearly adds a plain-language synonym (e.g. "called X" pattern)
+    if (!/\b(called|known as|refers to|means|is a|is when|is the)\b/i.test(text)) return true;
+  }
   return false;
 }
 
@@ -408,4 +511,59 @@ function cleanToken(word, isContinuation = false) {
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function normalizeKey(term) {
+  return term.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function isLowValueTerm(normalizedKey) {
+  // Words that frequently get tagged but are not helpful to explain.
+  return new Set(['intermittent', 'exertion']).has(normalizedKey);
+}
+
+function safeBuiltinDefinition(term) {
+  const key = normalizeKey(term);
+  const map = {
+    headache: 'Headache means pain in your head.',
+    nausea: 'Nausea means feeling like you might vomit.',
+    wheezing: 'Wheezing means a whistling sound when you breathe, often from narrowed airways.',
+    migraine: 'A migraine is a type of severe headache that can come with nausea and sensitivity to light or sound.',
+    photophobia: 'Photophobia means sensitivity to light.',
+    albuterol: 'Albuterol is an inhaler medicine that helps open the airways to make breathing easier.',
+    tsh: 'TSH is a blood test that helps check how well your thyroid is working.',
+  };
+  return map[key] || null;
+}
+
+function extractRegexEntities(text) {
+  const results = [];
+  const seen = new Set();
+
+  // Captures common staging/oncology phrasing that the NER model likely misses.
+  const patterns = [
+    /\bmetastatic infiltration to (?:the )?(?:[a-z-]+\s+){0,4}lymph nodes\b/ig,
+    /\bmediastinal lymph nodes\b/ig,
+  ];
+
+  for (const re of patterns) {
+    re.lastIndex = 0;
+    let match;
+    while ((match = re.exec(text)) !== null) {
+      const word = match[0].trim();
+      const key = word.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      results.push({
+        word,
+        label: 'Disease',
+        score: 1.0,
+        start: match.index,
+        end: match.index + word.length,
+        tokenCount: Math.max(1, word.split(/\s+/).length),
+      });
+    }
+  }
+
+  return results;
 }

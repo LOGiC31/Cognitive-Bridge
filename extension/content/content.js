@@ -153,6 +153,11 @@ class CognitiveBridge {
           } finally {
             this._applyingHighlights = false;
           }
+          console.log(`[CognitiveBridge] HIGHLIGHTED ${results.length} term(s):`);
+          results.forEach(r => {
+            const src = r.type === 'simplification' ? 'T5' : 'glossary';
+            console.log(`  [${src}] "${r.word.trim()}" → "${(r.explanation || '').slice(0, 80)}${(r.explanation || '').length > 80 ? '…' : ''}"`);
+          });
           this.reportStats(results);
         }
       } catch (err) {

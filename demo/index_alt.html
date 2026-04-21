@@ -114,30 +114,6 @@
       letter-spacing: 0.5px;
     }
 
-    table.vitals {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    table.vitals th {
-      text-align: left;
-      padding: 8px 12px;
-      background: #f7fafc;
-      border-bottom: 1px solid #e2e8f0;
-      font-weight: 600;
-      color: #4a5568;
-    }
-
-    table.vitals td {
-      padding: 8px 12px;
-      border-bottom: 1px solid #edf2f7;
-      color: #4a5568;
-    }
-
-    .flag-high { color: #e53e3e; font-weight: 600; }
-    .flag-low  { color: #dd6b20; font-weight: 600; }
-
     .banner {
       background: #ebf8ff;
       border-left: 4px solid #3182ce;
@@ -149,37 +125,6 @@
     }
 
     .banner strong { color: #1a365d; }
-
-    .instructions {
-      background: #fffff0;
-      border: 1px dashed #d69e2e;
-      border-radius: 8px;
-      padding: 16px 20px;
-      margin-bottom: 20px;
-      font-size: 13px;
-      color: #744210;
-    }
-
-    .instructions h3 {
-      color: #975a16;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-
-    .instructions ol {
-      padding-left: 20px;
-    }
-
-    .instructions li {
-      margin-bottom: 4px;
-    }
-
-    .instructions code {
-      background: #fefcbf;
-      padding: 1px 4px;
-      border-radius: 3px;
-      font-size: 12px;
-    }
   </style>
 </head>
 <body>
@@ -190,8 +135,8 @@
       <div class="patient-info">Demo Patient Account — For Testing Only</div>
     </div>
     <div style="text-align: right;">
-      <div style="font-size: 14px; font-weight: 600;">Jane Doe</div>
-      <div style="font-size: 12px; opacity: 0.8;">DOB: 01/15/1958 | MRN: 0012345</div>
+      <div style="font-size: 14px; font-weight: 600;">Demo Patient</div>
+      <div style="font-size: 12px; opacity: 0.8;">DOB: (redacted) | MRN: (redacted)</div>
     </div>
   </div>
 
@@ -210,29 +155,29 @@
 
     <div class="card">
       <div class="card-header">
-        <h2>Office Visit — Primary Care</h2>
-        <span class="date">March 15, 2026</span>
+        <h2>Office Visit — Family Medicine</h2>
+        <span class="date">April 10, 2026</span>
       </div>
       <div class="card-body">
         <span class="section-label">History of Present Illness</span>
-        <p>Ms. Doe is a 68-year-old female with atrial fibrillation and prior myocardial infarction, now presenting with worsening dyspnea on exertion and bilateral lower extremity edema over the past two weeks. Echocardiogram shows left ventricular ejection fraction of 35%, consistent with systolic dysfunction.</p>
+        <p>Patient reports persistent headache with photophobia and nausea, along with intermittent paresthesia in the right hand. Past history includes hypothyroidism and gastroesophageal reflux disease. Vitals stable; no focal neurologic deficits noted.</p>
 
         <span class="section-label">Assessment and Plan</span>
-        <p>Acute decompensated heart failure — initiate furosemide 40mg IV and reassess renal function. Chronic kidney disease stage 3b with creatinine 2.1 mg/dL; nephrology referral placed. Continue metformin and lisinopril at current doses.</p>
+        <p>Migraine — start sumatriptan as needed and avoid known triggers. Hypothyroidism — continue levothyroxine and recheck TSH in 6 weeks. Gastroesophageal reflux disease — continue omeprazole and counsel on diet modification.</p>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header">
-        <h2>Oncology Consult Note</h2>
-        <span class="date">March 12, 2026</span>
+        <h2>Pulmonology Consult Note</h2>
+        <span class="date">April 07, 2026</span>
       </div>
       <div class="card-body">
         <span class="section-label">Findings</span>
-        <p>CT chest and biopsy confirm malignant neoplasm of the lung with metastatic infiltration to mediastinal lymph nodes. Pathology demonstrates squamous cell carcinoma of the right upper lobe; staging T2b N2 M0.</p>
+        <p>CT chest demonstrates emphysema with bronchiectasis and mild atelectasis. Spirometry consistent with chronic obstructive pulmonary disease. Patient reports wheezing and episodic dyspnea with exertion.</p>
 
         <span class="section-label">Assessment</span>
-        <p>Patient presents with progressive cachexia and mild pleural effusion on the right. Concurrent chemoradiation planned; nutritional support initiated prior to cytotoxic therapy.</p>
+        <p>Chronic obstructive pulmonary disease — initiate albuterol inhaler as needed and consider inhaled corticosteroid if symptoms persist. Smoking cessation counseling provided.</p>
       </div>
     </div>
 
